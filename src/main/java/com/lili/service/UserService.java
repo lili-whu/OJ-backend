@@ -2,7 +2,7 @@ package com.lili.service;
 
 import com.lili.model.User;
 import com.baomidou.mybatisplus.extension.service.IService;
-import jakarta.servlet.http.HttpServlet;
+import com.lili.model.vo.SafetyUserVO;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
@@ -13,13 +13,23 @@ import jakarta.servlet.http.HttpServletRequest;
 public interface UserService extends IService<User> {
     /**
      * 用户注册
-     * @param userAccount 注册账户名
-     * @param password 密码
+     *
+     * @param userAccount     注册账户名
+     * @param password        密码
+     * @param confirmPassword
      * @return 生成的用户id
      */
-    Long userRegister(String userAccount, String password);
+    Long userRegister(String userAccount, String password, String confirmPassword);
 
-    User userLogin(String userAccount, String password, HttpServletRequest httpServletRequest);
+    SafetyUserVO userLogin(String userAccount, String password, HttpServletRequest httpServletRequest);
 
-    User getSafeUser(User originUser);
+    SafetyUserVO getSafeUser(User originUser);
+
+
+    /**
+     * 用户注销请求
+     * @param httpServletRequest
+     * @return
+     */
+    void userLogout(HttpServletRequest httpServletRequest);
 }

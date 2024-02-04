@@ -9,8 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * 用户服务测试
  * @Author lili
@@ -47,32 +45,39 @@ class UserServiceTest{
         // 校验
         String accountName = "lilia";
         String password = "123456abc";
-        Long result = userService.userRegister(accountName, password);
+        String confirmPassword = password;
+        Long result = userService.userRegister(accountName, password, confirmPassword);
         Assertions.assertEquals(-1, result);
         accountName = "liliabc??";
         password = "123456abc";
-        result = userService.userRegister(accountName, password);
+        confirmPassword = password;
+        result = userService.userRegister(accountName, password, confirmPassword);
         Assertions.assertEquals(-1, result);
         accountName = "liliabc";
         password = "1234a";
-        result = userService.userRegister(accountName, password);
+        confirmPassword = password;
+        result = userService.userRegister(accountName, password, confirmPassword);
         Assertions.assertEquals(-1, result);
         accountName = "liliabc";
         password = "123433423";
-        result = userService.userRegister(accountName, password);
+        confirmPassword = password;
+        result = userService.userRegister(accountName, password, confirmPassword);
         Assertions.assertEquals(-1, result);
         accountName = "liliabc";
         password = "abcdefg";
-        result = userService.userRegister(accountName, password);
+        confirmPassword = password;
+        result = userService.userRegister(accountName, password, confirmPassword);
         Assertions.assertEquals(-1, result);
         accountName = "liliabc";
         password = "1234abc";
-        result = userService.userRegister(accountName, password);
+        confirmPassword = password;
+        result = userService.userRegister(accountName, password, confirmPassword);
         Assertions.assertTrue(result > 0);
         // 账户名不能重复
         accountName = "liliabc";
         password = "1234abc";
-        result = userService.userRegister(accountName, password);
+        confirmPassword = password;
+        result = userService.userRegister(accountName, password, confirmPassword);
         Assertions.assertEquals(-1, result);
 
     }
@@ -80,12 +85,14 @@ class UserServiceTest{
     public void testAccountUnique(){
         String accountName = "liliabc123";
         String password = "lili1234abc";
-        Long result = userService.userRegister(accountName, password);
+        String confirmPassword = password;
+        Long result = userService.userRegister(accountName, password, confirmPassword);
         Assertions.assertTrue(result > 0);
         // 账户名不能重复
         accountName = "liliabc123";
         password = "lili1234abc";
-        result = userService.userRegister(accountName, password);
+        confirmPassword = password;
+        result = userService.userRegister(accountName, password, confirmPassword);
         Assertions.assertEquals(-1, result);
     }
 
