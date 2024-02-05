@@ -1,5 +1,7 @@
 # userManage-backend
 
+一个简单的登录注册和用户管理后端
+java + springboot + mysql + mybatis plus
 ## 1.31 初始化SpringBoot3和Mybatis Plus项目
 1. MybatisPlus 通过将Mapper接口继承BaseMapper, 实现基础单表增删改查操作
     > 注意: MybatisPlus对应SpringBoot3的依赖版本引入   
@@ -51,13 +53,16 @@ create table user(
 
 2. 用户信息查询和删除(Todo: 用户身份鉴权, 分页查询)
 
-* 利用MybatisPlus中的list方法进行查询, 构造querywrapper进行模糊匹配
-* 利用MybatisPlus中的remove方法进行删除(自动逻辑删除)
+   * 利用MybatisPlus中的list方法进行查询, 构造querywrapper进行模糊匹配
+   * 利用MybatisPlus中的remove方法进行删除(自动逻辑删除)
 
 3. 加入了一个用户权限字段user_role 区分管理员用户和普通用户
 
 ## 2.4 代码优化
-1. 统一返回对象
-2. 补充message信息, 表达业务层面是否失败/错误信息
-2. 全局异常处理
-3. 全局请求日志和登录校验
+1. 定义全局错误码ErrorCode, 以及异常类和全局异常处理器ExceptionHandler
+    * 发生非正常逻辑时直接抛出自定义异常类
+2. 全局登录校验和使用注解的身份校验拦截器Interceptor
+
+## 2.6 分页查询, 条件查询
+1. 分页查询, 注册Mybatis plus分页查询拦截器, 定义iPage传入参数
+2. 条件查询, 使用queryWrapper定义条件查询条件, 支持字符串模糊搜索

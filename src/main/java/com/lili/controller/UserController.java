@@ -2,23 +2,26 @@ package com.lili.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
+import com.lili.annotation.UserRoleAnnotation;
 import com.lili.constant.StringConstant;
 import com.lili.constant.enums.ErrorCode;
-import com.lili.constant.enums.RoleEnum;
+import com.lili.constant.enums.UserRole;
 import com.lili.exception.BusinessException;
 import com.lili.model.Result;
 import com.lili.model.User;
+import com.lili.model.dto.SafetyUserDTO;
 import com.lili.model.request.UserLoginRequest;
 import com.lili.model.request.UserRegisterRequest;
+import com.lili.model.vo.PageSafetyUserVO;
 import com.lili.model.vo.SafetyUserVO;
 import com.lili.service.UserService;
-import com.lili.service.impl.UserServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 用户Controller接口
@@ -62,6 +65,7 @@ public class UserController{
      * @param httpServletRequest http请求头
      * @return 安全的User返回
      */
+    // todo Redis单点登录
     @PostMapping("/login")
     public Result<SafetyUserVO> userLogin(@RequestBody UserLoginRequest request, HttpServletRequest httpServletRequest){
         log.info("user login:{}", request);
@@ -84,20 +88,15 @@ public class UserController{
     /**
      * 根据用户名查询用户(模糊搜索)
      * 管理员方法
-     * @param username 用户名
+     *
      * @return 用户集合
      */
-    @GetMapping("/search")
-    // todo  需要对管理员方法鉴权(session, interceptor)
-    public Result<List<SafetyUserVO>> searchUsers(String username){
-        log.info("search users by username:{}", username);
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        if(username == null) username = "";
-        queryWrapper.like("username", username);
-        // 对数据进行脱敏
-        List<SafetyUserVO> safeUserList = userService.list(queryWrapper)
-                .stream().map(userService::getSafeUser).toList();
-        return Result.success(safeUserList);
+    @PostMapping ("/search")
+    @UserRoleAnnotation(UserRole.ADMIN_ROLE)
+    public Result<PageSafetyUserVO> searchUsers(int pageSize, int current, @RequestBody SafetyUserDTO safetyUserDTO, HttpServletRequest httpServletRequest){
+        log.info("search users by admin:{}", safetyUserDTO);
+        PageSafetyUserVO puv = userService.searchUsers(pageSize, current, safetyUserDTO);
+        return Result.success(puv);
     }
 
     /**
@@ -106,10 +105,27 @@ public class UserController{
      * @return 是否删除成功
      */
     @DeleteMapping("/delete/{id}")
-    public Result<Boolean> deleteUser(@PathVariable Long id){
+    @UserRoleAnnotation(UserRole.ADMIN_ROLE)
+    public Result<Boolean> deleteUser(@PathVariable Long id, HttpServletRequest httpServletRequest){
         log.info("delete user by id:{}", id);
         if(id <= 0) throw new BusinessException(ErrorCode.PARAMS_ERROR, "非法id");
         // 逻辑删除
         return Result.success(userService.removeById(id));
     }
+
+    /**
+     * 管理员修改用户信息
+     * @param user
+     * @return
+     */
+    @PutMapping("/revise")
+    @UserRoleAnnotation(UserRole.ADMIN_ROLE)
+    public Result<Boolean> reviseUser(User user){
+        log.info("revise user by admin: {}", user);
+
+        userService.update();
+        return Result.success(true);
+    }
+
+
 }

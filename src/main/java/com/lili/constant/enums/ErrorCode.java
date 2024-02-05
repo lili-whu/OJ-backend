@@ -10,9 +10,11 @@ public enum ErrorCode{
     SUCCESS(20000), // 正常响应
     SYSTEM_ERROR(50000), // 系统内部异常
     UN_AUTH(40100), // 无权限
+    NOT_ADMIN(40102), // 非管理员
     UN_LOGIN(40101), // 未登录
     PARAMS_ERROR(40001), // 参数错误
     NULL_PARAM(40002); // 参数为空
+
 
     private final int code;
 

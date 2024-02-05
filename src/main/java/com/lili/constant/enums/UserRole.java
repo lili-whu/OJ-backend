@@ -3,7 +3,7 @@ package com.lili.constant.enums;
 /**
  * 用户权限
  */
-public enum RoleEnum{
+public enum UserRole{
     /**
      * 普通用户权限
      */
@@ -15,7 +15,11 @@ public enum RoleEnum{
 
     public final int role;
 
-    RoleEnum(int role){
+    public int getRole(){
+        return role;
+    }
+
+    UserRole(int role){
         this.role = role;
     }
 }

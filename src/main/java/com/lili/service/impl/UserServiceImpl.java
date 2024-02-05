@@ -1,21 +1,31 @@
 package com.lili.service.impl;
 
 import ch.qos.logback.core.spi.ErrorCodes;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lili.constant.StringConstant;
 import com.lili.constant.enums.ErrorCode;
 import com.lili.exception.BusinessException;
 import com.lili.model.User;
+import com.lili.model.dto.SafetyUserDTO;
+import com.lili.model.vo.PageSafetyUserVO;
 import com.lili.model.vo.SafetyUserVO;
 import com.lili.service.UserService;
 import com.lili.mapper.UserMapper;
 import com.lili.utils.EncryptUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -120,6 +130,49 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public void userLogout(HttpServletRequest httpServletRequest){
         httpServletRequest.getSession().removeAttribute(StringConstant.USER_LOGIN_STATE);
+    }
+
+    @Override
+    @Transactional
+    public void reviseUser(SafetyUserDTO safetyUserDTO){
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+
+        // 查询username是否重复
+        queryWrapper.eq("user_account", safetyUserDTO.getUsername());
+
+
+        boolean exist = this.baseMapper.exists(queryWrapper);
+        if(exist) throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户名已被占用");
+
+
+        User user = new User();
+        BeanUtils.copyProperties(safetyUserDTO, user);
+        userMapper.updateById(user);
+    }
+
+    @Override
+    public PageSafetyUserVO searchUsers(int pageSize, int current, SafetyUserDTO safetyUserDTO){
+        IPage<User> iPage = new Page<>();
+        iPage.setCurrent(current);
+        iPage.setSize(pageSize);
+
+        User user = new User();
+        BeanUtils.copyProperties(safetyUserDTO, user);
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        //Wrapper是抽象类, 可以直接调用子类方法
+        wrapper.like(user.getUsername() != null, "username", user.getUsername())
+                .like(user.getUserAccount() != null, "user_account", user.getUserAccount())
+                .like(user.getPhone() != null, "phone", user.getPhone())
+                .like(user.getEmail() != null, "email", user.getEmail())
+                .like(user.getAvatar() != null, "avatar", user.getAvatar())
+                .eq(user.getId() != null, "id", user.getId())
+                .eq(user.getGender() != null, "gender", user.getGender())
+                .eq(user.getUserRole() != null, "user_role", user.getUserRole())
+                .eq(user.getStatus() != null, "status", user.getStatus());
+
+        List<SafetyUserVO> lu = this.list(iPage, wrapper).stream().map(this::getSafeUser).toList();
+        long total = iPage.getTotal();
+        return new PageSafetyUserVO(total, lu);
     }
 
     private void verifyAccountAndPassword(String userAccount, String password){
