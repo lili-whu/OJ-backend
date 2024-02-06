@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lili.mapper.QuestionMapper">
+
+    <resultMap id="BaseResultMap" type="com.lili.model.Question">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="title" column="title" jdbcType="VARCHAR"/>
+            <result property="description" column="description" jdbcType="VARCHAR"/>
+            <result property="tags" column="tags" jdbcType="VARCHAR"/>
+            <result property="answer" column="answer" jdbcType="VARCHAR"/>
+            <result property="judge_case" column="judge_case" jdbcType="VARCHAR"/>
+            <result property="judge_config" column="judge_config" jdbcType="VARCHAR"/>
+            <result property="submit_num" column="submit_num" jdbcType="INTEGER"/>
+            <result property="accept_num" column="accept_num" jdbcType="INTEGER"/>
+            <result property="thumb_num" column="thumb_num" jdbcType="INTEGER"/>
+            <result property="favor_num" column="favor_num" jdbcType="INTEGER"/>
+            <result property="create_id" column="create_id" jdbcType="BIGINT"/>
+            <result property="create_time" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="update_time" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="is_delete" column="is_delete" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,title,description,
+        tags,answer,judge_case,
+        judge_config,submit_num,accept_num,
+        thumb_num,favor_num,create_id,
+        create_time,update_time,is_delete
+    </sql>
+</mapper>

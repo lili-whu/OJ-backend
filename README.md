@@ -1,3 +1,115 @@
+# OJ系统后端
+使用 java + springboot + mybatis_plus 构建的OJ系统
+* 基础登录注册用户管理功能继承user-center-backend项目
+
+## OJ主界面分析
+时间限制, 内存限制 时间复杂度, 空间复杂度(只能使用特定包, 不能暴力解 => 安全性)
+题目介绍, 输入, 输出, 输入用例, 输出用例
+
+## 系统分析
+后端编译代码, 运行代码, 输入测试用例, 获得结果, 比对测试结果
+
+## 核心功能
+1. 题目提交, 题目描述, 做题界面
+2. 代码沙箱
+   * 隔离的安全的环境, 不会影响系统运行
+   * 资源分配, 限制用户的可执行内存
+3. 判题规则
+   * 提米用例的比对, 结果验证
+4. 任务调度
+   * 按照顺序排队完成判题
+## 扩展思路:
+1. 做题记录统计分析展示
+2. 题解讨论, 点赞等论坛功能
+
+## 2.6 题目模块开发
+1. 题目和题目提交数据库表设计
+   use liOJ;
+
+drop table if exists user;
+# user表
+```mysql
+drop table if exists question;
+
+create table question(
+id bigint auto_increment primary key comment '主键',
+title varchar(512) comment '标题',
+description text comment '具体题目内容',
+tags varchar(1024) comment '题目标签, json数组(栈, 队列, 二叉树, 简单, 中等, 困难)',
+answer text comment '题解 todo 扩展为一个单独的数据表',
+judge_case text comment '测试用例, json数组',
+judge_config text comment '时空条件限制',
+submit_num int default 0 not null comment '提交次数',
+accept_num int default 0 not null comment '通过次数',
+thumb_num int default 0 not null comment '点赞数',
+favor_num int default 0 not null comment '收藏数',
+create_id bigint not null comment '创建题目的用户id',
+create_time  datetime default current_timestamp not null comment '创建时间',
+update_time  datetime  default current_timestamp not null on update current_timestamp comment '更新时间',
+is_delete    tinyint default 0 not null comment '逻辑删除',
+index idx_create_id (create_id)
+);
+
+drop table if exists record_submit;
+
+create table record_submit(
+id bigint auto_increment primary key comment 'id',
+language int comment '使用语言, 枚举值',
+code text comment '代码',
+judge_info text comment '判题信息(错误类型, 时间消耗, 空间消耗)',
+status int default 0 not null comment '提交状态(0 未判题 1 判题中 2 成功 3 失败)',
+question_id bigint not null comment '题目id',
+create_id bigint comment '提交的用户id',
+create_time  datetime default current_timestamp not null comment '创建时间',
+update_time  datetime  default current_timestamp not null on update current_timestamp comment '更新时间',
+is_delete tinyint default 0 not null comment '逻辑删除',
+index idx_question_id (question_id), # 创建题目索引方便后续查询某一题目的提交记录
+index idx_create_id (create_id)
+);
+```
+其中, judge_case judge_config judge_info 分别为
+
+```json
+[
+  {
+    "input": "1 2",
+    "output": "2 4"
+  },
+  {
+    "input": "2 3",
+    "output": "4 6"
+  }
+]
+```
+```json
+{
+  "memory_limit": 32,
+  "time_limit": 100
+}
+```
+
+```json
+{
+
+  "info": "Accepted(类型种类可查看枚举类)",
+  "memory": 12,
+  "time": 46
+}
+```
+使用MybatisX生成对应的mapper和service方法
+
+
+
+
+
+
+
+
+
+
+
+
+
 # userManage-backend
 
 一个简单的登录注册和用户管理后端

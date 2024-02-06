@@ -1,12 +1,12 @@
 spring:
   application:
-    name: user-center
+    name: liOJ
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: root12345678
-    url: jdbc:mysql://localhost:3306/web_center
+    url: jdbc:mysql://localhost:3306/liOJ
   session:
     timeout: 86400 # session过期时间
 
