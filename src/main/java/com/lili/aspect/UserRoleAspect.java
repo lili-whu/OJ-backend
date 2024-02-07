@@ -6,7 +6,7 @@ import com.lili.constant.StringConstant;
 import com.lili.constant.enums.ErrorCode;
 import com.lili.constant.enums.UserRole;
 import com.lili.exception.BusinessException;
-import com.lili.model.vo.SafetyUserVO;
+import com.lili.model.vo.SafetyUser;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -17,8 +17,6 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.time.LocalDateTime;
 
 /**
  * 实现公共字段自动填充逻辑
@@ -54,7 +52,7 @@ public class UserRoleAspect{
         // 没有获取到httpServletRequest参数, 正常情况下不会发生, 因为
         // 管理员方法一定需要一个HttpServletRequest获取session验证身份
         if(request == null) throw new BusinessException(ErrorCode.SYSTEM_ERROR, "系统错误");
-        SafetyUserVO safetyUser = (SafetyUserVO) request.getSession().getAttribute(StringConstant.USER_LOGIN_STATE);
+        SafetyUser safetyUser = (SafetyUser) request.getSession().getAttribute(StringConstant.USER_LOGIN_STATE);
 
         // 对比是否为管理员身份
         if(safetyUser.getUserRole() != role.getRole()){

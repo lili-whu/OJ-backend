@@ -2,13 +2,12 @@ package com.lili.model.vo;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
-public class SafetyUserVO{
+public class SafetyUser{
     @TableId(value = "id", type= IdType.AUTO)
     private Long id;
 

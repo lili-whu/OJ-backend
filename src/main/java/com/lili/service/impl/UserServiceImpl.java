@@ -1,9 +1,6 @@
 package com.lili.service.impl;
 
-import ch.qos.logback.core.spi.ErrorCodes;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -13,14 +10,13 @@ import com.lili.exception.BusinessException;
 import com.lili.model.User;
 import com.lili.model.dto.SafetyUserDTO;
 import com.lili.model.vo.PageSafetyUserVO;
-import com.lili.model.vo.SafetyUserVO;
+import com.lili.model.vo.SafetyUser;
 import com.lili.service.UserService;
 import com.lili.mapper.UserMapper;
 import com.lili.utils.EncryptUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -81,7 +77,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public SafetyUserVO userLogin(String userAccount, String password, HttpServletRequest httpServletRequest){
+    public SafetyUser userLogin(String userAccount, String password, HttpServletRequest httpServletRequest){
         // 1. 校验, 不通过则不需要到数据库中查询
         verifyAccountAndPassword(userAccount, password);
         String encryptPassword = EncryptUtils.passwordEncrypt(password);
@@ -97,7 +93,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "账户密码错误");
         }
         // 返回数据脱敏(去除密码等)
-        SafetyUserVO safetyUser = getSafeUser(user);
+        SafetyUser safetyUser = getSafeUser(user);
         // 记录用户登录态
         httpServletRequest.getSession().setAttribute(StringConstant.USER_LOGIN_STATE, safetyUser);
         return safetyUser;
@@ -110,9 +106,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * // todo 后续新的vo对象
      */
     @Override
-    public SafetyUserVO getSafeUser(User originUser){
+    public SafetyUser getSafeUser(User originUser){
         if(originUser == null) return null;
-        SafetyUserVO safetyUser = new SafetyUserVO();
+        SafetyUser safetyUser = new SafetyUser();
         safetyUser.setId(originUser.getId());
         safetyUser.setUsername(originUser.getUsername());
         safetyUser.setUserRole(originUser.getUserRole());
@@ -170,7 +166,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 .eq(user.getUserRole() != null, "user_role", user.getUserRole())
                 .eq(user.getStatus() != null, "status", user.getStatus());
 
-        List<SafetyUserVO> lu = this.list(iPage, wrapper).stream().map(this::getSafeUser).toList();
+        List<SafetyUser> lu = this.list(iPage, wrapper).stream().map(this::getSafeUser).toList();
         long total = iPage.getTotal();
         return new PageSafetyUserVO(total, lu);
     }

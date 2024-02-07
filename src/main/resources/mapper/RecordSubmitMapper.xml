@@ -2,23 +2,23 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.lili.mapper.RecordSubmitMapper">
+<mapper namespace="generator.mapper.RecordSubmitMapper">
 
-    <resultMap id="BaseResultMap" type="com.lili.model.RecordSubmit">
+    <resultMap id="BaseResultMap" type="generator.domain.RecordSubmit">
             <id property="id" column="id" jdbcType="BIGINT"/>
             <result property="language" column="language" jdbcType="INTEGER"/>
             <result property="code" column="code" jdbcType="VARCHAR"/>
-            <result property="judge_info" column="judge_info" jdbcType="VARCHAR"/>
+            <result property="judgeInfo" column="judge_info" jdbcType="VARCHAR"/>
             <result property="status" column="status" jdbcType="INTEGER"/>
-            <result property="question_id" column="question_id" jdbcType="BIGINT"/>
-            <result property="create_id" column="create_id" jdbcType="BIGINT"/>
-            <result property="create_time" column="create_time" jdbcType="TIMESTAMP"/>
-            <result property="update_time" column="update_time" jdbcType="TIMESTAMP"/>
-            <result property="is_delete" column="is_delete" jdbcType="TINYINT"/>
+            <result property="questionId" column="question_id" jdbcType="BIGINT"/>
+            <result property="createId" column="create_id" jdbcType="BIGINT"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="isDelete" column="is_delete" jdbcType="TINYINT"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,language,code,
+        id,`language`,code,
         judge_info,status,question_id,
         create_id,create_time,update_time,
         is_delete

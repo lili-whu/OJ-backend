@@ -1,13 +1,13 @@
 package com.lili.mapper;
 
-import com.lili.model.Question;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.lili.model.Question;
 
 /**
 * @author lili
 * @description 针对表【question】的数据库操作Mapper
-* @createDate 2024-02-07 00:30:06
-* @Entity com.lili.model.Question
+* @createDate 2024-02-07 23:31:48
+* @Entity generator.domain.Question
 */
 public interface QuestionMapper extends BaseMapper<Question> {
 

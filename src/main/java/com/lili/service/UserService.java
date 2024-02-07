@@ -4,7 +4,7 @@ import com.lili.model.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.lili.model.dto.SafetyUserDTO;
 import com.lili.model.vo.PageSafetyUserVO;
-import com.lili.model.vo.SafetyUserVO;
+import com.lili.model.vo.SafetyUser;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
@@ -23,9 +23,9 @@ public interface UserService extends IService<User> {
      */
     Long userRegister(String userAccount, String password, String confirmPassword);
 
-    SafetyUserVO userLogin(String userAccount, String password, HttpServletRequest httpServletRequest);
+    SafetyUser userLogin(String userAccount, String password, HttpServletRequest httpServletRequest);
 
-    SafetyUserVO getSafeUser(User originUser);
+    SafetyUser getSafeUser(User originUser);
 
 
     /**

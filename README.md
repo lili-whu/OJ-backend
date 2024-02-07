@@ -99,6 +99,11 @@ index idx_create_id (create_id)
 使用MybatisX生成对应的mapper和service方法
 
 
+## 2.7 添加dto、vo封装类
+1. 创建题目
+2. 修改题目
+3. 搜索题目
+其中搜索题目继承了PageResult, 支持分页查询, 测试用例在dto中使用List<JudgeCase>接收, 和前端json对应, 每一个JudgeCase是一个input output对
 
 
 

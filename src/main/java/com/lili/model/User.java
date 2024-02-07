@@ -43,7 +43,6 @@ public class User implements Serializable {
 
     private LocalDateTime updateTime;
 
-    @TableLogic
     private Integer isDelete; // 0 表示未删除
 
     @Serial

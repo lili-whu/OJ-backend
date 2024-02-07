@@ -1,9 +1,6 @@
 package com.lili.controller;
 
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
 import com.lili.annotation.UserRoleAnnotation;
 import com.lili.constant.StringConstant;
 import com.lili.constant.enums.ErrorCode;
@@ -15,13 +12,11 @@ import com.lili.model.dto.SafetyUserDTO;
 import com.lili.model.request.UserLoginRequest;
 import com.lili.model.request.UserRegisterRequest;
 import com.lili.model.vo.PageSafetyUserVO;
-import com.lili.model.vo.SafetyUserVO;
+import com.lili.model.vo.SafetyUser;
 import com.lili.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * 用户Controller接口
@@ -53,9 +48,9 @@ public class UserController{
 
 
     @GetMapping("/currentUser")
-    public Result<SafetyUserVO> getCurrentUser(HttpServletRequest httpServletRequest){
+    public Result<SafetyUser> getCurrentUser(HttpServletRequest httpServletRequest){
         log.info("getCurrentUser");
-        SafetyUserVO safetyUser = (SafetyUserVO) httpServletRequest.getSession().getAttribute(StringConstant.USER_LOGIN_STATE);
+        SafetyUser safetyUser = (SafetyUser) httpServletRequest.getSession().getAttribute(StringConstant.USER_LOGIN_STATE);
         return Result.success(safetyUser);
     }
 
@@ -67,9 +62,9 @@ public class UserController{
      */
     // todo Redis单点登录
     @PostMapping("/login")
-    public Result<SafetyUserVO> userLogin(@RequestBody UserLoginRequest request, HttpServletRequest httpServletRequest){
+    public Result<SafetyUser> userLogin(@RequestBody UserLoginRequest request, HttpServletRequest httpServletRequest){
         log.info("user login:{}", request);
-        SafetyUserVO user = userService.userLogin(request.getUserAccount(), request.getPassword(), httpServletRequest);
+        SafetyUser user = userService.userLogin(request.getUserAccount(), request.getPassword(), httpServletRequest);
         return Result.success(user);
     }
 

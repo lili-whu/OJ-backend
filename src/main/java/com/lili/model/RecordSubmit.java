@@ -1,11 +1,13 @@
 package com.lili.model;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.Date;
-import lombok.Data;
 
 /**
  * 
@@ -33,7 +35,7 @@ public class RecordSubmit implements Serializable {
     /**
      * 判题信息(错误类型, 时间消耗, 空间消耗)
      */
-    private String judge_info;
+    private String judgeInfo;
 
     /**
      * 提交状态(0 未判题 1 判题中 2 成功 3 失败)
@@ -43,28 +45,27 @@ public class RecordSubmit implements Serializable {
     /**
      * 题目id
      */
-    private Long question_id;
+    private Long questionId;
 
     /**
      * 提交的用户id
      */
-    private Long create_id;
+    private Long createId;
 
     /**
      * 创建时间
      */
-    private LocalDateTime create_time;
+    private Date createTime;
 
     /**
      * 更新时间
      */
-    private LocalDateTime update_time;
+    private Date updateTime;
 
     /**
      * 逻辑删除
      */
-    @TableLogic
-    private Integer is_delete;
+    private Integer isDelete;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

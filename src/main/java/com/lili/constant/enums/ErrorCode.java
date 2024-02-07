@@ -13,6 +13,7 @@ public enum ErrorCode{
     NOT_ADMIN(40102), // 非管理员
     UN_LOGIN(40101), // 未登录
     PARAMS_ERROR(40001), // 参数错误
+    NOT_FOUND(40400), //未发现
     NULL_PARAM(40002); // 参数为空
 
 
