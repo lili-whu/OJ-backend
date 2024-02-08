@@ -81,7 +81,7 @@ public class UserController{
     }
 
     /**
-     * 根据用户名查询用户(模糊搜索)
+     * 根据用户信息查询用户(模糊搜索)
      * 管理员方法
      *
      * @return 用户集合

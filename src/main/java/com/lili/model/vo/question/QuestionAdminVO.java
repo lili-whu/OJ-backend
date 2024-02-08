@@ -1,26 +1,22 @@
-package com.lili.model;
+package com.lili.model.vo.question;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.lili.model.request.question.JudgeCase;
+import com.lili.model.request.question.JudgeConfig;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
-/**
- * 
- * @TableName question
- */
-@TableName(value ="question")
 @Data
-public class Question implements Serializable {
+public class QuestionAdminVO extends CreateQuestionUserInfo implements Serializable{
     /**
      * 主键
      */
-    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
@@ -36,7 +32,7 @@ public class Question implements Serializable {
     /**
      * 题目标签, json数组
      */
-    private String tags;
+    private List<String> tags;
 
     /**
      * 题解 todo 扩展为一个单独的数据表
@@ -46,12 +42,12 @@ public class Question implements Serializable {
     /**
      * 测试用例, json数组
      */
-    private String judgeCase;
+    private List<JudgeCase> judgeCase;
 
     /**
      * 时空条件限制
      */
-    private String judgeConfig;
+    private JudgeConfig judgeConfig;
 
     /**
      * 提交次数
@@ -88,11 +84,6 @@ public class Question implements Serializable {
      */
     private LocalDateTime updateTime;
 
-    /**
-     * 逻辑删除
-     */
-    private Integer isDelete;
 
-    @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

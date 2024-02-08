@@ -1,6 +1,9 @@
 package com.lili.controller;
 
+import com.lili.model.vo.SafetyUser;
+import com.lili.service.RecordSubmitService;
 import com.lili.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,24 +23,17 @@ public class RecordSubmitController {
     @Autowired
     private UserService userService;
 
-    /**
-     * 点赞 / 取消点赞
-     *
-     * @param RecordSubmitAddRequest
-     * @param request
-     * @return resultNum 本次点赞变化数
-     */
-    @PostMapping("/")
-    public BaseResponse<Integer> doThumb(@RequestBody RecordSubmitAddRequest RecordSubmitAddRequest,
-                                         HttpServletRequest request) {
-        if (RecordSubmitAddRequest == null || RecordSubmitAddRequest.getPostId() <= 0) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
-        // 登录才能点赞
-        final User loginUser = userService.getLoginUser(request);
-        long postId = RecordSubmitAddRequest.getPostId();
-        int result = RecordSubmitService.doRecordSubmit(postId, loginUser);
-        return ResultUtils.success(result);
-    }
+//    @PostMapping("/")
+//    public BaseResponse<Integer> doThumb(@RequestBody RecordSubmitAddRequest RecordSubmitAddRequest,
+//                                         HttpServletRequest request) {
+//        if (RecordSubmitAddRequest == null || RecordSubmitAddRequest.getPostId() <= 0) {
+//            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+//        }
+//        // 登录才能点赞
+//        final SafetyUser loginUser = userService.getLoginUser(request);
+//        long postId = RecordSubmitAddRequest.getPostId();
+//        int result = RecordSubmitService.doRecordSubmit(postId, loginUser);
+//        return ResultUtils.success(result);
+//    }
 
 }

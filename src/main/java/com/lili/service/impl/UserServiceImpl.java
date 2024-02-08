@@ -171,6 +171,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return new PageSafetyUserVO(total, lu);
     }
 
+    @Override
+    public SafetyUser getLoginUser(HttpServletRequest httpServletRequest){
+        return (SafetyUser) httpServletRequest.getSession().getAttribute(StringConstant.USER_LOGIN_STATE);
+    }
+
     private void verifyAccountAndPassword(String userAccount, String password){
         if(userAccount == null && password == null){
             throw new BusinessException(ErrorCode.NULL_PARAM, "账户密码不能为空");

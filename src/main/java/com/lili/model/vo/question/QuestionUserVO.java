@@ -1,15 +1,14 @@
 package com.lili.model.vo.question;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
+import com.lili.model.request.question.JudgeConfig;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 @Data
-public class QuestionVO{
+public class QuestionUserVO extends CreateQuestionUserInfo implements Serializable{
     /**
      * 主键
      */
@@ -38,7 +37,7 @@ public class QuestionVO{
     /**
      * 时空条件限制
      */
-    private String judgeConfig;
+    private JudgeConfig judgeConfig;
 
     /**
      * 提交次数

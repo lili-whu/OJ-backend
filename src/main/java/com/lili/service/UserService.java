@@ -42,4 +42,5 @@ public interface UserService extends IService<User> {
 
     PageSafetyUserVO searchUsers(int pageSize, int current, SafetyUserDTO safetyUserDTO);
 
+    SafetyUser getLoginUser(HttpServletRequest httpServletRequest);
 }
