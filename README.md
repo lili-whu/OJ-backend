@@ -110,7 +110,7 @@ index idx_create_id (create_id)
     * 同样判断字段合法性, 并转为字符串
 3. 搜索题目
     * 分为管理员搜索和用户搜索, 结果对用户隐藏了测试用例等信息, 包含了数据库中字符串转json数组和数据脱敏方法
-
+添加题目的提交记录(code, questionId, language);
 
 
 

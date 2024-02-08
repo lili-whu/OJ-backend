@@ -1,5 +1,8 @@
 package com.lili.controller;
 
+import com.lili.exception.BusinessException;
+import com.lili.model.Result;
+import com.lili.model.request.recordSubmit.RecordSubmitAddRequest;
 import com.lili.model.vo.SafetyUser;
 import com.lili.service.RecordSubmitService;
 import com.lili.service.UserService;
@@ -23,17 +26,11 @@ public class RecordSubmitController {
     @Autowired
     private UserService userService;
 
-//    @PostMapping("/")
-//    public BaseResponse<Integer> doThumb(@RequestBody RecordSubmitAddRequest RecordSubmitAddRequest,
-//                                         HttpServletRequest request) {
-//        if (RecordSubmitAddRequest == null || RecordSubmitAddRequest.getPostId() <= 0) {
-//            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-//        }
-//        // 登录才能点赞
-//        final SafetyUser loginUser = userService.getLoginUser(request);
-//        long postId = RecordSubmitAddRequest.getPostId();
-//        int result = RecordSubmitService.doRecordSubmit(postId, loginUser);
-//        return ResultUtils.success(result);
-//    }
+    @PostMapping("/")
+    public Result<Long>recordSubmit(@RequestBody RecordSubmitAddRequest recordSubmitAddRequest,
+                                   HttpServletRequest httpServletRequest) {
+        Long id = recordSubmitService.doRecordSubmit(recordSubmitAddRequest, httpServletRequest);
+        return Result.success(id);
+    }
 
 }

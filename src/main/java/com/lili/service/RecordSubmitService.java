@@ -2,6 +2,8 @@ package com.lili.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.lili.model.RecordSubmit;
+import com.lili.model.request.recordSubmit.RecordSubmitAddRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
 * @author lili
@@ -10,4 +12,5 @@ import com.lili.model.RecordSubmit;
 */
 public interface RecordSubmitService extends IService<RecordSubmit> {
 
+    Long doRecordSubmit(RecordSubmitAddRequest recordSubmitAddRequest, HttpServletRequest httpServletRequest);
 }
