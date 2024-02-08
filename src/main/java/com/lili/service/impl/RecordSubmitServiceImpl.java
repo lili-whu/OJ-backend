@@ -3,6 +3,7 @@ package com.lili.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lili.constant.enums.ErrorCode;
+import com.lili.constant.enums.RecordSubmitStatusEnum;
 import com.lili.exception.BusinessException;
 import com.lili.mapper.RecordSubmitMapper;
 import com.lili.model.Question;
@@ -44,13 +45,15 @@ public class RecordSubmitServiceImpl extends ServiceImpl<RecordSubmitMapper, Rec
         if(question == null){
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "题目不存在");
         }
+        // todo 判断编程语言是否合法
+
         long createId = userService.getLoginUser(httpServletRequest).getId();
         // 设置初始状态
         RecordSubmit recordSubmit = new RecordSubmit();
         recordSubmit.setLanguage(recordSubmitAddRequest.getLanguage());
         recordSubmit.setCode(recordSubmitAddRequest.getCode());
         recordSubmit.setJudgeInfo("{}");
-        recordSubmit.setStatus(0);
+        recordSubmit.setStatus(RecordSubmitStatusEnum.WAITING.getStatus());
         recordSubmit.setQuestionId(recordSubmitAddRequest.getQuestionId());
         recordSubmit.setCreateId(createId);
         boolean save = this.save(recordSubmit);
