@@ -28,4 +28,11 @@ public enum JudgeInfoMessage{
         this.text = text;
         this.value = value;
     }
+
+    JudgeInfoMessage getEnumByValue(String value){
+        for(JudgeInfoMessage e: JudgeInfoMessage.values()){
+            if(e.getValue().equals(value)) return e;
+        }
+        return null;
+    }
 }

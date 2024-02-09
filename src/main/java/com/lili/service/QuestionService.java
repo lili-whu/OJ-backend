@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.lili.model.Question;
 import com.lili.model.request.question.QuestionAddRequest;
 import com.lili.model.request.question.QuestionQueryRequest;
+import com.lili.model.request.question.QuestionUpdateRequest;
 import com.lili.model.vo.question.QuestionAdminVO;
 import com.lili.model.vo.question.QuestionUserVO;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,7 +18,7 @@ import java.util.List;
 * @createDate 2024-02-07 23:31:48
 */
 public interface QuestionService extends IService<Question> {
-    public void validQuestion(Question question);
+    void validQuestionRequest(QuestionAddRequest questionAddRequest);
 
     QueryWrapper<Question> getQueryWrapper(QuestionQueryRequest questionQueryRequest);
 
@@ -32,4 +33,6 @@ public interface QuestionService extends IService<Question> {
     QuestionAdminVO getQuestionAdminVO(Question question);
 
     long addQuestion(QuestionAddRequest questionAddRequest, HttpServletRequest request);
+
+    boolean updateQuestion(QuestionUpdateRequest questionUpdateRequest);
 }

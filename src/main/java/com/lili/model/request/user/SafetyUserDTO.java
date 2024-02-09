@@ -1,14 +1,16 @@
-package com.lili.model.vo;
+package com.lili.model.request.user;
+
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
-public class SafetyUser{
-    @TableId(value = "id", type= IdType.AUTO)
+public class SafetyUserDTO{
+
     private Long id;
 
     private String username;
@@ -26,8 +28,4 @@ public class SafetyUser{
     private String email;
 
     private Integer status;
-
-    private LocalDateTime createTime;
-
-    private LocalDateTime updateTime;
 }

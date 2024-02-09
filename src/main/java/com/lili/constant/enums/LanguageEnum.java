@@ -5,7 +5,7 @@ package com.lili.constant.enums;
  * 编程语言
  */
 public enum LanguageEnum{
-    JAVA(0, "JAVA"),
+    JAVA(0, "Java"),
     CPLUSPLUS(1, "C++"),
     GOLANG(2, "Golang");
 

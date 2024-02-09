@@ -16,6 +16,7 @@ public class GlobalExceptionHandler{
 
     @ExceptionHandler(RuntimeException.class)
     public Result runtimeExceptionHandler(RuntimeException e){
+        e.printStackTrace();
         return Result.error(ErrorCode.SYSTEM_ERROR.getCode(), "系统错误");
     }
 

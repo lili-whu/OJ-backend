@@ -1,4 +1,4 @@
-package com.lili.model;
+package com.lili.model.request;
 
 import com.lili.constant.SortConstant;
 import lombok.Data;

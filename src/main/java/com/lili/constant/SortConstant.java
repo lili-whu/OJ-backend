@@ -5,11 +5,11 @@ public class SortConstant {
     /**
      * 升序
      */
-    public static String SORT_ORDER_ASC = "ascend";
+    public static String SORT_ORDER_ASC = "asc";
 
     /**
      * 降序
      */
-    public static String SORT_ORDER_DESC = " descend";
+    public static String SORT_ORDER_DESC = " desc";
 
 }

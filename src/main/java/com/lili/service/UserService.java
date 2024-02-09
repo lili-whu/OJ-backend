@@ -2,9 +2,9 @@ package com.lili.service;
 
 import com.lili.model.User;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.lili.model.dto.SafetyUserDTO;
-import com.lili.model.vo.PageSafetyUserVO;
-import com.lili.model.vo.SafetyUser;
+import com.lili.model.request.user.SafetyUserDTO;
+import com.lili.model.vo.user.PageSafetyUserVO;
+import com.lili.model.vo.user.SafetyUser;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**

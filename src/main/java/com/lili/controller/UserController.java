@@ -8,11 +8,11 @@ import com.lili.constant.enums.UserRole;
 import com.lili.exception.BusinessException;
 import com.lili.model.Result;
 import com.lili.model.User;
-import com.lili.model.dto.SafetyUserDTO;
-import com.lili.model.request.UserLoginRequest;
-import com.lili.model.request.UserRegisterRequest;
-import com.lili.model.vo.PageSafetyUserVO;
-import com.lili.model.vo.SafetyUser;
+import com.lili.model.request.user.SafetyUserDTO;
+import com.lili.model.request.user.UserLoginRequest;
+import com.lili.model.request.user.UserRegisterRequest;
+import com.lili.model.vo.user.PageSafetyUserVO;
+import com.lili.model.vo.user.SafetyUser;
 import com.lili.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -48,6 +48,7 @@ public class UserController{
 
 
     @GetMapping("/currentUser")
+    @UserRoleAnnotation(UserRole.DEFAULT_ROLE)
     public Result<SafetyUser> getCurrentUser(HttpServletRequest httpServletRequest){
         log.info("getCurrentUser");
         SafetyUser safetyUser = (SafetyUser) httpServletRequest.getSession().getAttribute(StringConstant.USER_LOGIN_STATE);
@@ -74,6 +75,7 @@ public class UserController{
      * @return
      */
     @PostMapping("/logout")
+    @UserRoleAnnotation(UserRole.DEFAULT_ROLE)
     public Result<Integer> userLogout(HttpServletRequest httpServletRequest){
         log.info("用户注销");
         userService.userLogout(httpServletRequest);
@@ -102,10 +104,14 @@ public class UserController{
     @DeleteMapping("/delete/{id}")
     @UserRoleAnnotation(UserRole.ADMIN_ROLE)
     public Result<Boolean> deleteUser(@PathVariable Long id, HttpServletRequest httpServletRequest){
-        log.info("delete user by id:{}", id);
+        log.info("delete user by admin:{}", id);
         if(id <= 0) throw new BusinessException(ErrorCode.PARAMS_ERROR, "非法id");
         // 逻辑删除
-        return Result.success(userService.removeById(id));
+        boolean result = userService.removeById(id);
+        if(!result){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在或已经被删除");
+        }
+        return Result.success(true);
     }
 
     /**
@@ -115,7 +121,7 @@ public class UserController{
      */
     @PutMapping("/revise")
     @UserRoleAnnotation(UserRole.ADMIN_ROLE)
-    public Result<Boolean> reviseUser(User user){
+    public Result<Boolean> reviseUser(User user, HttpServletRequest request){
         log.info("revise user by admin: {}", user);
 
         userService.update();

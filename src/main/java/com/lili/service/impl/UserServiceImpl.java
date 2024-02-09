@@ -8,9 +8,9 @@ import com.lili.constant.StringConstant;
 import com.lili.constant.enums.ErrorCode;
 import com.lili.exception.BusinessException;
 import com.lili.model.User;
-import com.lili.model.dto.SafetyUserDTO;
-import com.lili.model.vo.PageSafetyUserVO;
-import com.lili.model.vo.SafetyUser;
+import com.lili.model.request.user.SafetyUserDTO;
+import com.lili.model.vo.user.PageSafetyUserVO;
+import com.lili.model.vo.user.SafetyUser;
 import com.lili.service.UserService;
 import com.lili.mapper.UserMapper;
 import com.lili.utils.EncryptUtils;
@@ -103,7 +103,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * 对返回用户数据进行脱敏
      * @param originUser 原始数据库中用户
      * @return 脱敏用户
-     * // todo 后续新的vo对象
      */
     @Override
     public SafetyUser getSafeUser(User originUser){
@@ -144,6 +143,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         User user = new User();
         BeanUtils.copyProperties(safetyUserDTO, user);
         userMapper.updateById(user);
+        //todo 更新用户后需要更新session中的用户信息
     }
 
     @Override

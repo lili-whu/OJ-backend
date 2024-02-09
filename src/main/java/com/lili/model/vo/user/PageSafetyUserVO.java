@@ -1,4 +1,4 @@
-package com.lili.model.vo;
+package com.lili.model.vo.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -100,7 +100,7 @@ index idx_create_id (create_id)
 
 
 ## 2.7 添加dto、vo封装类
-
+tips: 封装类用包装类型, 前端没有传入值默认为null
 其中搜索题目继承了PageResult, 支持分页查询, 测试用例在dto中使用List<JudgeCase>接收, 和前端json对应, 每一个JudgeCase是一个input output对
 
 ## 2.8 添加对题目的增删改查方法
@@ -110,9 +110,15 @@ index idx_create_id (create_id)
     * 同样判断字段合法性, 并转为字符串
 3. 搜索题目
     * 分为管理员搜索和用户搜索, 结果对用户隐藏了测试用例等信息, 包含了数据库中字符串转json数组和数据脱敏方法
-添加题目的提交记录(code, questionId, language);
+4. 添加题目的提交记录(code, questionId, language);
+5. 添加编程语言和提交状态的枚举类
+6. 引入swagger接口文档测试
 
-
+## 2.9
+1. 添加了对提交记录的分页查询方法, 针对code字段, 只有本人或管理员可查看
+2. 修改了对题目合法性判断的逻辑, 应当对前端原始数据进行判断, 而不是转换后的String进行判断
+    * 使用StringUtils和ObjectUtils中的方法判断是否为null或者空
+3. 改了一个小bug: 私有字段要getDeclaredField获取
 
 
 

@@ -1,4 +1,4 @@
-package com.lili.model.request;
+package com.lili.model.request.user;
 
 
 import lombok.Data;

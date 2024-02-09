@@ -1,18 +1,14 @@
 package com.lili.controller;
 import cn.hutool.json.JSONUtil;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lili.annotation.UserRoleAnnotation;
 import com.lili.constant.enums.ErrorCode;
 import com.lili.constant.enums.UserRole;
 import com.lili.exception.BusinessException;
 import com.lili.model.Question;
 import com.lili.model.Result;
-import com.lili.model.User;
 import com.lili.model.request.question.QuestionAddRequest;
 import com.lili.model.request.question.QuestionQueryRequest;
 import com.lili.model.request.question.QuestionUpdateRequest;
-import com.lili.model.vo.SafetyUser;
 import com.lili.model.vo.question.QuestionAdminVO;
 import com.lili.model.vo.question.QuestionUserVO;
 import com.lili.service.QuestionService;
@@ -44,6 +40,7 @@ public class QuestionController {
      * @return
      */
     @PostMapping("/add")
+    @UserRoleAnnotation(UserRole.ADMIN_ROLE)
     public Result<Long> addQuestion(@RequestBody QuestionAddRequest questionAddRequest, HttpServletRequest request) {
         long newQuestionId = questionService.addQuestion(questionAddRequest, request);
         return Result.success(newQuestionId);
@@ -73,26 +70,10 @@ public class QuestionController {
      * @param questionUpdateRequest
      * @return
      */
-    @PostMapping("/update")
+    @PutMapping("/update")
     @UserRoleAnnotation(UserRole.ADMIN_ROLE)
-    public Result<Boolean> updateQuestion(@RequestBody QuestionUpdateRequest questionUpdateRequest) {
-        Question question = new Question();
-        BeanUtils.copyProperties(questionUpdateRequest, question);
-        List<String> tags = questionUpdateRequest.getTags();
-        if (tags != null) {
-            question.setTags(JSONUtil.toJsonStr(tags));
-        }
-        question.setJudgeConfig(JSONUtil.toJsonStr(questionUpdateRequest.getJudgeConfig()));
-        question.setJudgeCase(JSONUtil.toJsonStr(questionUpdateRequest.getJudgeCase()));
-        // 参数校验
-        questionService.validQuestion(question);
-        long id = questionUpdateRequest.getId();
-        // 判断是否存在
-        Question oldQuestion = questionService.getById(id);
-        if(oldQuestion == null){
-            throw new BusinessException(ErrorCode.NOT_FOUND, "需要更新的题目不存在");
-        }
-        boolean result = questionService.updateById(question);
+    public Result<Boolean> updateQuestion(@RequestBody QuestionUpdateRequest questionUpdateRequest, HttpServletRequest request) {
+        boolean result = questionService.updateQuestion(questionUpdateRequest);
         return Result.success(result);
     }
 
@@ -102,7 +83,8 @@ public class QuestionController {
      * @param id
      * @return
      */
-    @GetMapping("user/get/{id}")
+    @GetMapping("user/{id}")
+    @UserRoleAnnotation(UserRole.DEFAULT_ROLE)
     public Result<QuestionUserVO> getUserQuestionById(@PathVariable long id, HttpServletRequest request) {
         Question question = questionService.getById(id);
         if (question == null) {
@@ -117,7 +99,7 @@ public class QuestionController {
      * @param id
      * @return
      */
-    @GetMapping("admin/get/{id}")
+    @GetMapping("admin/{id}")
     @UserRoleAnnotation(UserRole.ADMIN_ROLE)
     public Result<QuestionAdminVO> getAdminQuestionById(@PathVariable long id, HttpServletRequest request) {
         Question question = questionService.getById(id);
@@ -135,7 +117,7 @@ public class QuestionController {
      */
     @PostMapping("/admin/page")
     @UserRoleAnnotation(UserRole.ADMIN_ROLE)
-    public Result<List<QuestionAdminVO>> getQuestionsByAdmin(@RequestBody QuestionQueryRequest questionQueryRequest) {
+    public Result<List<QuestionAdminVO>> getQuestionsByAdmin(@RequestBody QuestionQueryRequest questionQueryRequest, HttpServletRequest request) {
         List<QuestionAdminVO> questions = questionService.getQuestionsByAdmin(questionQueryRequest);
 
         return Result.success(questions);
@@ -148,7 +130,8 @@ public class QuestionController {
      * @return
      */
     @PostMapping("/user/page")
-    public Result<List<QuestionUserVO>> getQuestionsByUser(@RequestBody QuestionQueryRequest questionQueryRequest) {
+    @UserRoleAnnotation(UserRole.DEFAULT_ROLE)
+    public Result<List<QuestionUserVO>> getQuestionsByUser(@RequestBody QuestionQueryRequest questionQueryRequest, HttpServletRequest request) {
         List<QuestionUserVO> questions = questionService.getQuestionsByUser(questionQueryRequest);
         return Result.success(questions);
     }

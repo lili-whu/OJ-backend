@@ -1,23 +1,25 @@
-package com.lili.model;
+package com.lili.model.vo.recordSubmit;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.lili.model.Question;
+import com.lili.model.request.recordSubmit.JudgeInfo;
+import com.lili.model.vo.question.QuestionUserVO;
+import com.lili.model.vo.user.SafetyUser;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 /**
- * 
- * @TableName record_submit
+ * 查询提交记录接口
  */
-@TableName(value ="record_submit")
 @Data
-public class RecordSubmit implements Serializable {
+public class RecordSubmitVO implements Serializable{
     /**
      * id
      */
-    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
@@ -33,7 +35,7 @@ public class RecordSubmit implements Serializable {
     /**
      * 判题信息(错误类型, 时间消耗, 空间消耗)
      */
-    private String judgeInfo;
+    private JudgeInfo judgeInfo;
 
     /**
      * 提交状态(0 未判题 1 判题中 2 成功 3 失败)
@@ -61,11 +63,15 @@ public class RecordSubmit implements Serializable {
     private LocalDateTime updateTime;
 
     /**
-     * 逻辑删除
+     * 提交的用户信息
      */
-    @TableLogic
-    private Integer isDelete;
+    private SafetyUser safetyUser;
 
-    @TableField(exist = false)
+    /**
+     * 题目信息
+     */
+    private QuestionUserVO questionUserVO;
+
+
     private static final long serialVersionUID = 1L;
 }
