@@ -2,6 +2,7 @@ package com.lili.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.lili.model.PageResult;
 import com.lili.model.Question;
 import com.lili.model.RecordSubmit;
 import com.lili.model.request.question.QuestionQueryRequest;
@@ -25,7 +26,7 @@ public interface RecordSubmitService extends IService<RecordSubmit> {
 
     QueryWrapper<RecordSubmit> getQueryWrapper(RecordSubmitQueryRequest recordSubmitQueryRequest);
 
-    List<RecordSubmitVO> getRecordSubmitPageVO(RecordSubmitQueryRequest recordSubmitQueryRequest, HttpServletRequest request);
+    PageResult<RecordSubmitVO> getRecordSubmitPageVO(RecordSubmitQueryRequest recordSubmitQueryRequest, HttpServletRequest request);
 
     RecordSubmitVO getRecordSubmitVO(RecordSubmit recordSubmit, SafetyUser user);
 }

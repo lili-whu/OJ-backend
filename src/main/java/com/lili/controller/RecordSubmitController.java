@@ -2,6 +2,7 @@ package com.lili.controller;
 
 import com.lili.annotation.UserRoleAnnotation;
 import com.lili.constant.enums.UserRole;
+import com.lili.model.PageResult;
 import com.lili.model.Result;
 import com.lili.model.request.question.QuestionQueryRequest;
 import com.lili.model.request.recordSubmit.RecordSubmitAddRequest;
@@ -23,7 +24,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/record")
+@RequestMapping("api/record")
 @Slf4j
 public class RecordSubmitController {
 
@@ -50,8 +51,8 @@ public class RecordSubmitController {
      */
     @PostMapping("/page")
     @UserRoleAnnotation(UserRole.DEFAULT_ROLE)
-    public Result<List<RecordSubmitVO>> getRecordSubmitPage(@RequestBody RecordSubmitQueryRequest recordSubmitQueryRequest, HttpServletRequest request) {
-        List<RecordSubmitVO> recordSubmitPageVO = recordSubmitService.getRecordSubmitPageVO(recordSubmitQueryRequest, request);
+    public Result<PageResult<RecordSubmitVO>> getRecordSubmitPage(@RequestBody RecordSubmitQueryRequest recordSubmitQueryRequest, HttpServletRequest request) {
+        PageResult<RecordSubmitVO> recordSubmitPageVO = recordSubmitService.getRecordSubmitPageVO(recordSubmitQueryRequest, request);
 
         return Result.success(recordSubmitPageVO);
     }

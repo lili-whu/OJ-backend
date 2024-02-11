@@ -4,6 +4,7 @@ import com.lili.annotation.UserRoleAnnotation;
 import com.lili.constant.enums.ErrorCode;
 import com.lili.constant.enums.UserRole;
 import com.lili.exception.BusinessException;
+import com.lili.model.PageResult;
 import com.lili.model.Question;
 import com.lili.model.Result;
 import com.lili.model.request.question.QuestionAddRequest;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/question")
+@RequestMapping("api/question")
 @Slf4j
 public class QuestionController {
 
@@ -117,8 +118,8 @@ public class QuestionController {
      */
     @PostMapping("/admin/page")
     @UserRoleAnnotation(UserRole.ADMIN_ROLE)
-    public Result<List<QuestionAdminVO>> getQuestionsByAdmin(@RequestBody QuestionQueryRequest questionQueryRequest, HttpServletRequest request) {
-        List<QuestionAdminVO> questions = questionService.getQuestionsByAdmin(questionQueryRequest);
+    public Result<PageResult<QuestionAdminVO>> getQuestionsByAdmin(@RequestBody QuestionQueryRequest questionQueryRequest, HttpServletRequest request) {
+        PageResult<QuestionAdminVO> questions = questionService.getQuestionsByAdmin(questionQueryRequest);
 
         return Result.success(questions);
     }
@@ -131,8 +132,8 @@ public class QuestionController {
      */
     @PostMapping("/user/page")
     @UserRoleAnnotation(UserRole.DEFAULT_ROLE)
-    public Result<List<QuestionUserVO>> getQuestionsByUser(@RequestBody QuestionQueryRequest questionQueryRequest, HttpServletRequest request) {
-        List<QuestionUserVO> questions = questionService.getQuestionsByUser(questionQueryRequest);
+    public Result<PageResult<QuestionUserVO>> getQuestionsByUser(@RequestBody QuestionQueryRequest questionQueryRequest, HttpServletRequest request) {
+        PageResult<QuestionUserVO> questions = questionService.getQuestionsByUser(questionQueryRequest);
         return Result.success(questions);
     }
 }

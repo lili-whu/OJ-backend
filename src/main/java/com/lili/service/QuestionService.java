@@ -2,6 +2,7 @@ package com.lili.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.lili.model.PageResult;
 import com.lili.model.Question;
 import com.lili.model.request.question.QuestionAddRequest;
 import com.lili.model.request.question.QuestionQueryRequest;
@@ -22,9 +23,9 @@ public interface QuestionService extends IService<Question> {
 
     QueryWrapper<Question> getQueryWrapper(QuestionQueryRequest questionQueryRequest);
 
-    List<QuestionUserVO> getQuestionsByUser(QuestionQueryRequest questionQueryRequest);
+    PageResult<QuestionUserVO> getQuestionsByUser(QuestionQueryRequest questionQueryRequest);
 
-    List<QuestionAdminVO> getQuestionsByAdmin(QuestionQueryRequest questionQueryRequest);
+    PageResult<QuestionAdminVO> getQuestionsByAdmin(QuestionQueryRequest questionQueryRequest);
 
 
 

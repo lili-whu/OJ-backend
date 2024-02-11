@@ -11,6 +11,7 @@ import com.lili.constant.SortConstant;
 import com.lili.constant.enums.ErrorCode;
 import com.lili.exception.BusinessException;
 import com.lili.mapper.QuestionMapper;
+import com.lili.model.PageResult;
 import com.lili.model.Question;
 import com.lili.model.request.question.*;
 import com.lili.model.vo.user.SafetyUser;
@@ -55,6 +56,9 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
         if(ObjectUtil.isEmpty(request.getTags())){
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "标签为空");
         }
+        if(StringUtils.isEmpty(request.getDifficulty())){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "难度为空");
+        }
         if(request.getAnswer() != null && request.getAnswer().length() > 8192){
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "答案过长");
         }
@@ -83,12 +87,14 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
         Long createId = questionQueryRequest.getCreateId();
         String sortField = questionQueryRequest.getSortField();
         String sortOrder = questionQueryRequest.getSortOrder();
+        String difficulty = questionQueryRequest.getDifficulty();
 
         QueryWrapper<Question> queryWrapper = new QueryWrapper<>();
 
         queryWrapper.like(StringUtils.isNotBlank(title), "title", title);
         queryWrapper.like(StringUtils.isNotBlank(description), "description", description);
         queryWrapper.like(StringUtils.isNotBlank(answer), "answer", answer);
+        queryWrapper.eq(StringUtils.isNotBlank(difficulty), "difficulty", difficulty);
 
         // tags查询条件, 单独tag作为查询条件
         if(tags != null && !tags.isEmpty()){
@@ -115,27 +121,29 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
     }
 
     @Override
-    public List<QuestionUserVO> getQuestionsByUser(QuestionQueryRequest questionQueryRequest){
+    public PageResult<QuestionUserVO> getQuestionsByUser(QuestionQueryRequest questionQueryRequest){
         long current = questionQueryRequest.getCurrent();
         long size = questionQueryRequest.getPageSize();
         IPage<Question> iPage = new Page<>();
         iPage.setSize(size);
         iPage.setCurrent(current);
-        return questionMapper.selectList(iPage, this.getQueryWrapper(questionQueryRequest))
+        List<QuestionUserVO> questions = questionMapper.selectList(iPage, this.getQueryWrapper(questionQueryRequest))
                 .stream().map(this::getQuestionUserVO).toList();
+        return new PageResult<QuestionUserVO>(iPage.getTotal(), questions);
 
     }
 
     @Override
-    public List<QuestionAdminVO> getQuestionsByAdmin(QuestionQueryRequest questionQueryRequest){
+    public PageResult<QuestionAdminVO> getQuestionsByAdmin(QuestionQueryRequest questionQueryRequest){
         long current = questionQueryRequest.getCurrent();
         long size = questionQueryRequest.getPageSize();
         IPage<Question> iPage = new Page<>();
         iPage.setSize(size);
         iPage.setCurrent(current);
 
-        return questionMapper.selectList(iPage, this.getQueryWrapper(questionQueryRequest))
+        List<QuestionAdminVO> questionAdminVOS = questionMapper.selectList(iPage, this.getQueryWrapper(questionQueryRequest))
                 .stream().map(this::getQuestionAdminVO).toList();
+        return new PageResult<QuestionAdminVO>(iPage.getTotal(), questionAdminVOS);
     }
 
     @Override

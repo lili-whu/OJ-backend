@@ -29,6 +29,8 @@ public class QuestionAdminVO extends CreateQuestionUserInfo implements Serializa
      */
     private String description;
 
+
+    private String difficulty;
     /**
      * 题目标签, json数组
      */

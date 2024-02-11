@@ -18,6 +18,9 @@ public class QuestionQueryRequest extends PageRequest implements Serializable {
      */
     private String title;
 
+
+    private String difficulty;
+
     /**
      * 具体题目内容
      */

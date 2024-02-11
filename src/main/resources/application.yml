@@ -22,6 +22,10 @@ mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
+# 代码沙箱配置
+codeSandbox:
+  type: example # 沙箱类型, 通过配置切换, 不需要修改代码
+
 
 # springdoc-openapi项目配置
 springdoc:
@@ -35,3 +39,4 @@ springdoc:
     - group: 'default'
       paths-to-match: '/**'
       packages-to-scan: com.lili.controller
+

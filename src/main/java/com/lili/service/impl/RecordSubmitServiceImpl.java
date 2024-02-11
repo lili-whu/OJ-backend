@@ -13,7 +13,9 @@ import com.lili.constant.enums.ErrorCode;
 import com.lili.constant.enums.RecordSubmitStatusEnum;
 import com.lili.constant.enums.UserRole;
 import com.lili.exception.BusinessException;
+import com.lili.judge.JudgeService;
 import com.lili.mapper.RecordSubmitMapper;
+import com.lili.model.PageResult;
 import com.lili.model.Question;
 import com.lili.model.RecordSubmit;
 import com.lili.model.request.question.QuestionQueryRequest;
@@ -29,10 +31,12 @@ import com.lili.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
 * @author lili
@@ -47,6 +51,10 @@ public class RecordSubmitServiceImpl extends ServiceImpl<RecordSubmitMapper, Rec
     private QuestionService questionService;
     @Autowired
     private UserService userService;
+
+    @Autowired
+    @Lazy
+    private JudgeService judgeService;
     @Autowired
     private RecordSubmitMapper recordSubmitMapper;
 
@@ -80,6 +88,8 @@ public class RecordSubmitServiceImpl extends ServiceImpl<RecordSubmitMapper, Rec
         if(!save){
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "判题提交失败");
         }
+        // todo 判题
+        CompletableFuture.runAsync(() -> judgeService.doJudge(recordSubmit.getId()));
         return recordSubmit.getId();
     }
 
@@ -117,7 +127,7 @@ public class RecordSubmitServiceImpl extends ServiceImpl<RecordSubmitMapper, Rec
     }
 
     @Override
-    public List<RecordSubmitVO> getRecordSubmitPageVO(RecordSubmitQueryRequest recordSubmitQueryRequest, HttpServletRequest httpServletRequest){
+    public PageResult<RecordSubmitVO> getRecordSubmitPageVO(RecordSubmitQueryRequest recordSubmitQueryRequest, HttpServletRequest httpServletRequest){
         long current = recordSubmitQueryRequest.getCurrent();
         long size = recordSubmitQueryRequest.getPageSize();
         IPage<RecordSubmit> iPage = new Page<>();
@@ -126,8 +136,9 @@ public class RecordSubmitServiceImpl extends ServiceImpl<RecordSubmitMapper, Rec
         // 得到调用方法的user
         SafetyUser user = userService.getLoginUser(httpServletRequest);
         // 脱敏转换为VO返回
-        return recordSubmitMapper.selectList(iPage, this.getQueryWrapper(recordSubmitQueryRequest))
+        List<RecordSubmitVO> recordSubmitVOS = recordSubmitMapper.selectList(iPage, this.getQueryWrapper(recordSubmitQueryRequest))
                 .stream().map(recordSubmit -> getRecordSubmitVO(recordSubmit, user)).toList();
+        return new PageResult<>(iPage.getTotal(), recordSubmitVOS);
 
     }
 

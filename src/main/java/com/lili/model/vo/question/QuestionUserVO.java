@@ -29,6 +29,8 @@ public class QuestionUserVO extends CreateQuestionUserInfo implements Serializab
      */
     private List<String> tags;
 
+
+    private String difficulty;
     /**
      * 题解 todo 扩展为一个单独的数据表
      */

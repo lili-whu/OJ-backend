@@ -40,6 +40,9 @@ public class Question implements Serializable {
      */
     private String answer;
 
+
+    private String difficulty;
+
     /**
      * 测试用例, json数组
      */
