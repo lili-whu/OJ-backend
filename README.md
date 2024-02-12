@@ -142,6 +142,21 @@ tips: 封装类用包装类型, 前端没有传入值默认为null
     * 定义JudgeManager根据语言类型不同执行不同的判题策略, 并在判题完成后及时更新提交记录
     * 使用CompletableFuture定义异步执行判题逻辑
 
+## 2.12 
+1. docker创建代码沙箱
+   * 虚拟机:每个虚拟机都运行着完整的操作系统实例，包括其内核及完整的用户空间。虚拟机完全在虚拟的cpu, 内存运行(创建虚拟机时指定)
+   * docker:操作系统级别的虚拟, 共享操作系统内核, 拥有独立的文件系统空间、网络空间、进程空间, 以及CGroups实现容器的资源隔离
+   * docker利用linux的namespaces为容器提供独立的文件系统, 进程空间等视图, 使用CGroup限制docker使用的资源量
+2. java操作docker
+   * 使用docker-client封装http请求和docker守护进程进行交互
+   * 具体步骤
+      * 指定apache http_client5作为通信, 配置docker-config
+      * 远程aliyun服务器docker守护进程开启tcp2375端口监听
+      * 在aliyun官网和主机开启2375端口安全组, **重启远程服务器**
+      * 测试远程控制docker操作(创建容器, 启动容器, 获取日志, 删除容器)
+3. 
+//todo docker代码沙箱实现
+
 
 
 # userManage-backend
