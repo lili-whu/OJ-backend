@@ -5,7 +5,7 @@ import com.lili.constant.enums.JudgeInfoMessage;
 import com.lili.model.Question;
 import com.lili.model.request.question.JudgeCase;
 import com.lili.model.request.question.JudgeConfig;
-import com.lili.model.request.recordSubmit.JudgeInfo;
+import com.lili.judge.codeSandbox.model.JudgeInfo;
 
 import java.util.List;
 

@@ -1,10 +1,6 @@
 package com.lili.model.vo.recordSubmit;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.lili.model.Question;
-import com.lili.model.request.recordSubmit.JudgeInfo;
+import com.lili.judge.codeSandbox.model.JudgeInfo;
 import com.lili.model.vo.question.QuestionUserVO;
 import com.lili.model.vo.user.SafetyUser;
 import lombok.Data;

@@ -3,7 +3,7 @@ package com.lili.judge.strategy;
 import com.lili.model.Question;
 import com.lili.model.RecordSubmit;
 import com.lili.model.request.question.JudgeCase;
-import com.lili.model.request.recordSubmit.JudgeInfo;
+import com.lili.judge.codeSandbox.model.JudgeInfo;
 import lombok.Data;
 
 import java.util.List;

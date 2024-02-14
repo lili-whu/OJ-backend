@@ -5,7 +5,7 @@ import com.lili.judge.strategy.JavaStrategy;
 import com.lili.judge.strategy.JudgeContext;
 import com.lili.judge.strategy.JudgeStrategy;
 import com.lili.model.RecordSubmit;
-import com.lili.model.request.recordSubmit.JudgeInfo;
+import com.lili.judge.codeSandbox.model.JudgeInfo;
 import org.springframework.stereotype.Service;
 
 /**

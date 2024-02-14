@@ -1,4 +1,4 @@
-package com.lili.judge.codeSandbox.model;
+package com.lili.codesandbox.codeSandbox.model;
 
 import lombok.Data;
 

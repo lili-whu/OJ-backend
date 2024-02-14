@@ -5,7 +5,7 @@ import com.lili.constant.enums.RecordSubmitStatusEnum;
 import com.lili.judge.codeSandbox.CodeSandBox;
 import com.lili.judge.codeSandbox.model.ExecuteCodeRequest;
 import com.lili.judge.codeSandbox.model.ExecuteCodeResponse;
-import com.lili.model.request.recordSubmit.JudgeInfo;
+import com.lili.judge.codeSandbox.model.JudgeInfo;
 
 import java.util.List;
 
