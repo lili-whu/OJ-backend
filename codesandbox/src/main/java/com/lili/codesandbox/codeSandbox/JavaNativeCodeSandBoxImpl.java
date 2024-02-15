@@ -2,18 +2,17 @@ package com.lili.codesandbox.codeSandbox;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.resource.ResourceUtil;
+import cn.hutool.dfa.FoundWord;
+import cn.hutool.dfa.WordTree;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.lili.codesandbox.codeSandbox.model.ExecuteCodeRequest;
 import com.lili.codesandbox.codeSandbox.model.ExecuteCodeResponse;
 import com.lili.codesandbox.codeSandbox.model.ExecuteMessage;
 import com.lili.codesandbox.codeSandbox.model.JudgeInfo;
 import com.lili.codesandbox.utils.ProcessUtils;
-import jakarta.annotation.Resource;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,15 +24,34 @@ public class JavaNativeCodeSandBoxImpl implements CodeSandBox{
     public static final String GLOBAL_CODE_DIR = "codesandbox/testcode";
 
     public static final String GLOBAL_FILE_NAME = "Main.java";
+
+    public static final List<String> blackList = Arrays.asList("File", "exec", "Paths");
+
+    public static final WordTree wordTree;
+
+
+    // 静态方法初始化
+    static {
+        // 初始化字典树
+        wordTree = new WordTree();
+        wordTree.addWords(blackList);
+
+    }
+
+
     @Override
     public ExecuteCodeResponse executeCode(ExecuteCodeRequest executeCodeRequest){
         List<String> inputList = executeCodeRequest.getInputList();
         String code = executeCodeRequest.getCode();
-        Integer language = executeCodeRequest.getLanguage();
 
+        // 检查代码非法操作
+        FoundWord foundWord = wordTree.matchWord(code);
+        if(foundWord != null){
+            System.out.println("存在非法字符: " + foundWord.getFoundWord());
+            return getErrorResponse("非法操作");
+        }
 
         //1. 保存用户代码文件
-
         String userDir = System.getProperty("user.dir");
         String globalCodePathName = userDir + File.separator + GLOBAL_CODE_DIR;
         // 判断代码目录是否存在
@@ -55,6 +73,7 @@ public class JavaNativeCodeSandBoxImpl implements CodeSandBox{
             return getErrorResponse("系统执行错误");
         }
         if(executeMessage.getErrorMessage() != null){
+            System.out.println(executeMessage.getErrorMessage());
             return getErrorResponse("编译错误");
         }
         System.out.println("compileExecuteMessage = " + executeMessage);
@@ -63,11 +82,10 @@ public class JavaNativeCodeSandBoxImpl implements CodeSandBox{
         List<ExecuteMessage> executeMessages = new ArrayList<>();
 
         for(String inputArgs: inputList){
-            String runCmd = String.format("java -cp %s Main %s", userCodeDir, inputArgs);
+            String runCmd = String.format("java -Xmx256m -cp %s Main %s", userCodeDir, inputArgs);
             try {
                 executeMessage = ProcessUtils.runProcess(runCmd);
-            } catch (InterruptedException | IOException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
                 return getErrorResponse("系统执行错误");
             }
             System.out.println("runExecuteMessage = " + executeMessage);
@@ -122,7 +140,7 @@ public class JavaNativeCodeSandBoxImpl implements CodeSandBox{
         JavaNativeCodeSandBoxImpl codeSandBox = new JavaNativeCodeSandBoxImpl();
         ExecuteCodeRequest executeCodeRequest = new ExecuteCodeRequest();
         executeCodeRequest.setInputList(Arrays.asList("1 2", "3 4"));
-        String code = ResourceUtil.readStr("testcode/simpleCompute/Main.java", StandardCharsets.UTF_8);
+        String code = ResourceUtil.readStr("testcode/unsafeCode/Main.java", StandardCharsets.UTF_8);
         executeCodeRequest.setLanguage(1);
         executeCodeRequest.setCode(code);
         ExecuteCodeResponse executeCodeResponse = codeSandBox.executeCode(executeCodeRequest);

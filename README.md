@@ -167,7 +167,46 @@ tips: 封装类用包装类型, 前端没有传入值默认为null
      * 整理输出结果
      * 出现系统错误或编译错误返回error(status = 2)
 
+2.  代码安全限制
 
+   一些危险的破坏操作
+
+   * 长时间时间占用 Thread.sleep()
+   * 内存占用过大
+   * 读系统目录文件, 信息泄露
+   * 写入文件, 并执行
+
+   解决方案
+
+   * 守护线程, 限制运行时间超时控制
+
+   * ```java
+     // 守护线程, 超时控制
+     new Thread(() -> {
+         try {
+             Thread.sleep(TIME_OUT);
+             if(process.isAlive()){
+                 process.destroy();
+                 System.out.println("超时自动退出");
+             }
+         } catch (InterruptedException e) {
+             throw new RuntimeException(e);
+         }
+     ```
+
+   * 限制系统内存占用, 限制JVM最大堆内存占用
+
+     JVM参数 -Xmx256m限制最大堆内存空间 -Xms指定初始堆内存空间
+
+     > 只是在JVM应用程序(堆空间)上进行限制, 不能等同于系统实际占用的资源. 在Linux中可以使用cgroup限制对CPU和内存的分配
+
+   * 定义代码黑名单, 禁止非法代码(正则表达式/布隆过滤器/字典树)
+
+     使用hutool中的WordTree创建字典树并检测代码
+
+     缺点: 无法遍历所有的黑名单, 不同编程语言对应的关键词都不一样
+
+     
 
 
 

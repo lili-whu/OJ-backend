@@ -10,6 +10,8 @@ import java.io.InputStreamReader;
 
 public class ProcessUtils{
 
+    public static final Long TIME_OUT = 3000L;
+
     /**
      * 创建进程, 执行命令
      * @param cmd 命令
@@ -22,6 +24,18 @@ public class ProcessUtils{
         int waitFor = 0;
 
             Process process = Runtime.getRuntime().exec(cmd);
+            // 守护线程, 超时控制
+            new Thread(() -> {
+                try {
+                    Thread.sleep(TIME_OUT);
+                    if(process.isAlive()){
+                        process.destroy();
+                        System.out.println("超时自动退出");
+                    }
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+        }).start();
             waitFor = process.waitFor();
             StringBuilder exeProcessOutput = new StringBuilder();
 
