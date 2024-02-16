@@ -19,7 +19,7 @@ public class DockerUtils{
 
 
     @Value("${docker}")
-    private String dockerPort = "tcp://121.199.10.73:2375";
+    private static final String dockerPort = "tcp://121.199.10.73:2375";
 
     /**
      * 连接Docker服务器

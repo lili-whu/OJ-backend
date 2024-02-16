@@ -9,6 +9,7 @@ import com.lili.codesandbox.codeSandbox.model.ExecuteCodeRequest;
 import com.lili.codesandbox.codeSandbox.model.ExecuteCodeResponse;
 import com.lili.codesandbox.codeSandbox.model.ExecuteMessage;
 import com.lili.codesandbox.codeSandbox.model.JudgeInfo;
+import com.lili.codesandbox.enums.CodeSandboxStatusEnum;
 import com.lili.codesandbox.exception.CodeSandboxException;
 import com.lili.codesandbox.utils.ProcessUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +47,7 @@ public class JavaNativeCodeSandBoxImpl extends JavaCodeSandboxTemplate{
         FoundWord foundWord = wordTree.matchWord(code);
         if (foundWord != null) {
             log.info("存在非法字符: " + foundWord.getFoundWord());
-            throw new CodeSandboxException("非法操作", 3);
+            throw new CodeSandboxException("非法操作", CodeSandboxStatusEnum.COMPILE_ERROR.getCode());
         }
     }
 

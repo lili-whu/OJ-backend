@@ -2,13 +2,13 @@ package com.lili.constant.enums;
 
 public enum RecordSubmitStatusEnum{
 
-    WAITING("等待中", 0),
+    WAITING("等待中", 1),
 
-    RUNNING("判题中", 1),
+    FAILED("判题失败", 2),
 
-    SUCCESS("判题完成", 2),
+    SUCCESS("判题成功", 3);
 
-    FAILED("判题失败", 3);
+
     private final String info;
 
     private final int status;

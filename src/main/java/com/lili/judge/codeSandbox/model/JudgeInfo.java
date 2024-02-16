@@ -9,4 +9,6 @@ public class JudgeInfo{
     private Long memoryConsume;
 
     private Long timeConsume;
+
+    private String detailMessage;
 }

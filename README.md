@@ -154,7 +154,6 @@ tips: 封装类用包装类型, 前端没有传入值默认为null
       * 远程aliyun服务器docker守护进程开启tcp2375端口监听
       * 在aliyun官网和主机开启2375端口安全组, **重启远程服务器**
       * 测试远程控制docker操作(创建容器, 启动容器, 获取日志, 删除容器)
-3. //todo docker代码沙箱实现
 
 ## 2.14 Java原生实现代码沙箱
 
@@ -238,12 +237,17 @@ tips: 封装类用包装类型, 前端没有传入值默认为null
 
 2. 跑通代码流程, 策略模式(参数配置化)选择remoteCodeSandbox, 远程代码沙箱提供docker原生实现的API接口, 项目发送请求给代码沙箱, 处理后返回, 结果进行处理写入数据库
 
-* recordSubmit表新建字段result, 存储判题结果, 建立问题id和提交用户id的联合索引, 便于用户查询题目的提交记录
+3. recordSubmit表新建字段result, 存储判题结果, 建立问题id和提交用户id的联合索引, 便于用户查询题目的提交记录; judgeInfo新增详细描述, 用于返回错误信息
+
+4. todo 使用Redis记录用户提交ID, 限制用户10秒内只允许一次提交
+
+5. 定义CodeSandboxStatus枚举类, 表示判题沙箱的返回状态(正常执行完成, 系统错误, 编译错误等), 完善判题服务逻辑, 根据代码沙箱返回状态判断代码执行结果 // todo 内存溢出尚未判断
 
 # userManage-backend
 
 一个简单的登录注册和用户管理后端
 java + springboot + mysql + mybatis plus
+
 ## 1.31 初始化SpringBoot3和Mybatis Plus项目
 1. MybatisPlus 通过将Mapper接口继承BaseMapper, 实现基础单表增删改查操作
     > 注意: MybatisPlus对应SpringBoot3的依赖版本引入   
@@ -293,7 +297,7 @@ create table user(
      * 数据库中密码是否正确, 和密文密码做对比
      * 记录用户登录态(用户信息, 存到HttpServerlet session中
 
-2. 用户信息查询和删除(Todo: 用户身份鉴权, 分页查询)
+2. 用户信息查询和删除
 
    * 利用MybatisPlus中的list方法进行查询, 构造querywrapper进行模糊匹配
    * 利用MybatisPlus中的remove方法进行删除(自动逻辑删除)

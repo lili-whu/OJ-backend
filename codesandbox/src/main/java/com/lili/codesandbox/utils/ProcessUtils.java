@@ -2,6 +2,8 @@ package com.lili.codesandbox.utils;
 
 import com.lili.codesandbox.codeSandbox.model.ExecuteCodeResponse;
 import com.lili.codesandbox.codeSandbox.model.ExecuteMessage;
+import com.lili.codesandbox.enums.CodeSandboxStatusEnum;
+import com.lili.codesandbox.exception.CodeSandboxException;
 import org.springframework.util.StopWatch;
 
 import java.io.BufferedReader;
@@ -30,10 +32,10 @@ public class ProcessUtils{
                     Thread.sleep(TIME_OUT);
                     if(process.isAlive()){
                         process.destroy();
-                        System.out.println("超时自动退出");
+                        throw new CodeSandboxException("超时错误", CodeSandboxStatusEnum.TIME_LIMIT_ERROR.getCode());
                     }
                 } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                    throw new CodeSandboxException("系统错误", CodeSandboxStatusEnum.SYSTEM_ERROR.getCode());
                 }
         }).start();
             waitFor = process.waitFor();

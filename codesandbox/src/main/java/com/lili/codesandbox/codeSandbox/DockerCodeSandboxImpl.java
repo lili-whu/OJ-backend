@@ -18,6 +18,7 @@ import com.lili.codesandbox.codeSandbox.model.ExecuteCodeRequest;
 import com.lili.codesandbox.codeSandbox.model.ExecuteCodeResponse;
 import com.lili.codesandbox.codeSandbox.model.ExecuteMessage;
 import com.lili.codesandbox.codeSandbox.model.JudgeInfo;
+import com.lili.codesandbox.enums.CodeSandboxStatusEnum;
 import com.lili.codesandbox.exception.CodeSandboxException;
 import com.lili.codesandbox.utils.ProcessUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -75,7 +76,7 @@ public class DockerCodeSandboxImpl extends JavaCodeSandboxTemplate{
             copyArchiveToContainerCmd.withTarInputStream(createTarInputStream(compiledFile.getParentFile().getAbsolutePath(), "./Main.class"))
                     .withRemotePath("/");
         } catch (Exception e) {
-            throw new CodeSandboxException("系统错误", 2);
+            throw new CodeSandboxException("系统错误", CodeSandboxStatusEnum.SYSTEM_ERROR.getCode());
         }
         copyArchiveToContainerCmd.exec();
 
@@ -115,7 +116,7 @@ public class DockerCodeSandboxImpl extends JavaCodeSandboxTemplate{
                     @Override
                     public void onNext(Frame frame){
                         if(StreamType.STDERR.equals(frame.getStreamType())){
-                            throw new CodeSandboxException(new String(frame.getPayload()).strip(), 3);
+                            throw new CodeSandboxException(new String(frame.getPayload()).strip(), CodeSandboxStatusEnum.RUNTIME_ERROR.getCode());
                         }else{
                             exeMessage.setMessage(new String(frame.getPayload()).strip());
                         }
@@ -131,11 +132,11 @@ public class DockerCodeSandboxImpl extends JavaCodeSandboxTemplate{
                 exeMessage.setMemory(maxMemory[0]);
                 executeMessages.add(exeMessage);
                 if(timeout[0]){
-                    throw new CodeSandboxException("执行超出允许的最大时间", 3);
+                    throw new CodeSandboxException("超时错误", CodeSandboxStatusEnum.TIME_LIMIT_ERROR.getCode());
                 }
             }
         } catch (InterruptedException e) {
-            throw new CodeSandboxException("系统错误", 2);
+            throw new CodeSandboxException("系统错误", CodeSandboxStatusEnum.SYSTEM_ERROR.getCode());
         }
         // 执行结束删除容器
         dockerClient.removeContainerCmd(containerId).withForce(true).exec();

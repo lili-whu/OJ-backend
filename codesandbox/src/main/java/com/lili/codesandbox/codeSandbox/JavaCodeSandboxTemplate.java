@@ -9,6 +9,7 @@ import com.lili.codesandbox.codeSandbox.model.ExecuteCodeRequest;
 import com.lili.codesandbox.codeSandbox.model.ExecuteCodeResponse;
 import com.lili.codesandbox.codeSandbox.model.ExecuteMessage;
 import com.lili.codesandbox.codeSandbox.model.JudgeInfo;
+import com.lili.codesandbox.enums.CodeSandboxStatusEnum;
 import com.lili.codesandbox.exception.CodeSandboxException;
 import com.lili.codesandbox.utils.ProcessUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -52,6 +53,10 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandBox{
             deleteFile(file);
         }catch(CodeSandboxException e){
             return getErrorResponse(e);
+        }catch (Exception e){
+            e.printStackTrace();
+            CodeSandboxException codeSandboxException = new CodeSandboxException("其他错误", CodeSandboxStatusEnum.SYSTEM_ERROR.getCode());
+            return getErrorResponse(codeSandboxException);
         }
         return outputResponse;
     }
@@ -88,13 +93,12 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandBox{
         try {
             executeMessage = ProcessUtils.runProcess(compileCmd);
         } catch (InterruptedException | IOException e) {
-            throw new CodeSandboxException("系统错误", 2);
+            throw new CodeSandboxException("系统错误", CodeSandboxStatusEnum.SYSTEM_ERROR.getCode());
         }
         if(executeMessage.getErrorMessage() != null){
             System.out.println(executeMessage.getErrorMessage());
-            throw new CodeSandboxException(executeMessage.getErrorMessage(), 3);
+            throw new CodeSandboxException(executeMessage.getErrorMessage(), CodeSandboxStatusEnum.COMPILE_ERROR.getCode());
         }
-//        System.out.println("compileExecuteMessage = " + executeMessage);
     }
 
     /**
@@ -111,7 +115,7 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandBox{
             try {
                 executeMessage = ProcessUtils.runProcess(runCmd);
             } catch (Exception e) {
-                throw new CodeSandboxException("系统执行异常", 2);
+                throw new CodeSandboxException("系统执行异常", CodeSandboxStatusEnum.SYSTEM_ERROR.getCode());
             }
 //            log.info("runExecuteMessage = " + executeMessage);
             executeMessages.add(executeMessage);
@@ -134,14 +138,14 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandBox{
         List<String> outputList = new ArrayList<>();
         for(ExecuteMessage message: executeMessages){
             if(StringUtils.isNotBlank(message.getErrorMessage())){
-                // 代码执行报错, status为3
-                throw new CodeSandboxException(message.getErrorMessage(), 3);
+                // 代码执行报错
+                throw new CodeSandboxException(message.getErrorMessage(), CodeSandboxStatusEnum.RUNTIME_ERROR.getCode());
             }
             outputList.add(message.getMessage());
             maxTime = Math.max(maxTime, message.getTime());
             maxMemory = Math.max(maxMemory, message.getMemory());
         }
-        executeCodeResponse.setStatus(1);
+        executeCodeResponse.setStatus(CodeSandboxStatusEnum.CORRECT.getCode());
         executeCodeResponse.setOutputList(outputList);
         JudgeInfo judgeInfo = new JudgeInfo();
         judgeInfo.setMemoryConsume(maxMemory);

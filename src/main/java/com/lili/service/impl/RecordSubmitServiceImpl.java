@@ -71,7 +71,6 @@ public class RecordSubmitServiceImpl extends ServiceImpl<RecordSubmitMapper, Rec
         if(question == null){
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "题目不存在");
         }
-        // todo 判断编程语言是否合法
 
         long createId = userService.getLoginUser(httpServletRequest).getId();
         // 设置初始状态
@@ -86,7 +85,6 @@ public class RecordSubmitServiceImpl extends ServiceImpl<RecordSubmitMapper, Rec
         if(!save){
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "判题提交失败");
         }
-        // todo 判题
         CompletableFuture.runAsync(() -> judgeService.doJudge(recordSubmit.getId()));
         return recordSubmit.getId();
     }

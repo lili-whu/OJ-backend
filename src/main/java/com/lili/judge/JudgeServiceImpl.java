@@ -1,7 +1,9 @@
 package com.lili.judge;
 
 import cn.hutool.json.JSONUtil;
+import com.lili.constant.enums.CodeSandboxStatusEnum;
 import com.lili.constant.enums.ErrorCode;
+import com.lili.constant.enums.JudgeInfoMessage;
 import com.lili.constant.enums.RecordSubmitStatusEnum;
 import com.lili.exception.BusinessException;
 import com.lili.judge.codeSandbox.CodeSandBox;
@@ -21,6 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class JudgeServiceImpl implements JudgeService{
@@ -40,22 +43,23 @@ public class JudgeServiceImpl implements JudgeService{
     @Override
     public void doJudge(long recordSubmitId){
 
-        // 1. 获取提交记录
+
+        // 1. 用户限流 todo 使用Redis限流用户10秒内只允许一次提交
+
+        // 2. 获取提交记录
         RecordSubmit recordSubmit = recordSubmitService.getById(recordSubmitId);
         if(recordSubmit == null){
             throw new BusinessException(ErrorCode.NOT_FOUND, "提交信息不存在");
         }
-        // 2. 获取问题信息
+        // 3. 获取问题信息
         Long questionId = recordSubmit.getQuestionId();
         Question question = questionService.getById(questionId);
         if(question == null){
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "提交的题目不存在");
         }
-        // 3. 判断题目状态是否为等待 todo 用户在题目判题结束前只允许一次提交, 不允许一直提交相同的内容
-        if(!recordSubmit.getStatus().equals(RecordSubmitStatusEnum.WAITING.getStatus())){
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "题目已经在判题中");
-        }
-        //4. 调用代码沙箱, 获取执行结果
+
+
+        // 4. 调用代码沙箱
         CodeSandBox codeSandBox = CodeSandBoxFactory.newInstance(sandboxType);
         codeSandBox = new CodeSandBoxProxy(codeSandBox);
         Integer language = recordSubmit.getLanguage();
@@ -67,25 +71,35 @@ public class JudgeServiceImpl implements JudgeService{
                 .language(language)
                 .inputList(inputList)
                 .build();
+
+        // 5. 获取执行结果
         ExecuteCodeResponse executeCodeResponse = codeSandBox.executeCode(executeCodeRequest);
 
+
+        // 6.执行判题服务
         List<String> outputList = executeCodeResponse.getOutputList();
         JudgeInfo judgeInfo = executeCodeResponse.getJudgeInfo();
         JudgeContext judgeContext = new JudgeContext();
 
-        judgeContext.setJudgeInfo(judgeInfo);
-        judgeContext.setInputList(inputList);
-        judgeContext.setOutputList(outputList);
         judgeContext.setJudgeCaseList(judgeCaseList);
         judgeContext.setQuestion(question);
         judgeContext.setRecordSubmit(recordSubmit);
+        judgeContext.setExecuteCodeResponse(executeCodeResponse);
+
         // 直接调用judgeMapper, 类似静态代理模式, 会在judgeManager中完成策略模式的选择
         JudgeInfo judgeInfoResponse = judgeManager.doJudge(judgeContext);
-        // todo 修改数据库中的判题结果
+
+        // 7.结果写入数据库
         RecordSubmit recordSubmitUpdate = new RecordSubmit();
         recordSubmitUpdate.setId(recordSubmitId);
         recordSubmitUpdate.setJudgeInfo(JSONUtil.toJsonStr(judgeInfoResponse));
-        recordSubmitUpdate.setStatus(RecordSubmitStatusEnum.SUCCESS.getStatus());
+        if(JudgeInfoMessage.SYSTEM_ERROR.getCode().equals(Objects.requireNonNull(JudgeInfoMessage.getEnumByValue(judgeInfoResponse.getMessage())).getCode())){
+            recordSubmitUpdate.setStatus(RecordSubmitStatusEnum.FAILED.getStatus());
+        }else{
+            // 不是系统错误都可以认为是成功
+            recordSubmitUpdate.setStatus(RecordSubmitStatusEnum.SUCCESS.getStatus());
+        }
+        recordSubmitUpdate.setResult(Objects.requireNonNull(JudgeInfoMessage.getEnumByValue(judgeInfoResponse.getMessage())).getCode());
         boolean result = recordSubmitService.updateById(recordSubmitUpdate);
         if(!result){
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "题目状态更新错误");
