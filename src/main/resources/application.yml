@@ -24,9 +24,11 @@ mybatis-plus:
 
 # 代码沙箱配置
 codeSandbox:
-  type: example # 沙箱类型, 通过配置切换, 不需要修改代码
+  type: remote # 沙箱类型, 通过配置切换, 不需要修改代码
+  url: http://localhost:8081/exeCodeDocker
 
-docker: "tcp://121.199.10.73:2375"
+
+docker: tcp://121.199.10.73:2375
 
 # springdoc-openapi项目配置
 springdoc:

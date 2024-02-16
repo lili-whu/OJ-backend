@@ -12,6 +12,7 @@ import com.lili.codesandbox.codeSandbox.model.JudgeInfo;
 import com.lili.codesandbox.exception.CodeSandboxException;
 import com.lili.codesandbox.utils.ProcessUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Slf4j
+@Service
 public class JavaNativeCodeSandBoxImpl extends JavaCodeSandboxTemplate{
 
     public static final List<String> blackList = Arrays.asList("File", "exec", "Paths");

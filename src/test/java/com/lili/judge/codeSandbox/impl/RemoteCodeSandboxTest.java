@@ -13,10 +13,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-class ExampleCodeSandboxTest{
+class RemoteCodeSandboxTest{
     @Test
     void exeCode(){
-        CodeSandBox codeSandBox = new ExampleCodeSandbox();
+        CodeSandBox codeSandBox = new RemoteCodeSandbox();
         String code = """
                 public class Main{
                     public static void main(String[] args){
@@ -27,7 +27,7 @@ class ExampleCodeSandboxTest{
                 }
                 """;
         Integer language = LanguageEnum.JAVA.getCode();
-        List<String> inputList = Arrays.asList("1 2", "3 4");
+        List<String> inputList = Arrays.asList("1 2", "3 4", "4 4", "6 6");
         ExecuteCodeRequest executeCodeRequest = ExecuteCodeRequest.builder()
                 .code(code)
                 .language(language)

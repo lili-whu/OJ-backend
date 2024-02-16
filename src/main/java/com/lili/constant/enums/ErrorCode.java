@@ -14,6 +14,7 @@ public enum ErrorCode{
     UN_LOGIN(40101), // 未登录
     PARAMS_ERROR(40001), // 参数错误
     NOT_FOUND(40400), //未发现
+    API_REQUEST_ERROR(50010), // API请求错误
     NULL_PARAM(40002); // 参数为空
 
 

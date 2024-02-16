@@ -24,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -34,6 +35,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
+@Service
 public class DockerCodeSandboxImpl extends JavaCodeSandboxTemplate{
 
     public static final Long TIME_OUT = 5000L;

@@ -19,9 +19,9 @@ public class RecordSubmitQueryRequest extends PageRequest implements Serializabl
     private Integer language;
 
     /**
-     * 判题结果(属于JudgeInfo)
+     * 判题结果
      */
-    private Integer resultStatus;
+    private Integer result;
 
     /**
      * 题目id

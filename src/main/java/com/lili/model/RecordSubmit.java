@@ -50,6 +50,12 @@ public class RecordSubmit implements Serializable {
      */
     private Long createId;
 
+
+    /**
+     * 提交结果
+     */
+    private int result;
+
     /**
      * 创建时间
      */

@@ -35,7 +35,7 @@ public class JavaStrategy implements JudgeStrategy{
         //5.2. 判断是否有不符合答案的情况
         for(int i = 0; i < judgeCaseList.size(); i++){
             JudgeCase judgeCase = judgeCaseList.get(i);
-            if(judgeCase.getOutput().equals(outputList.get(i))){
+            if(!judgeCase.getOutput().equals(outputList.get(i))){
                 judgeInfoMessage = JudgeInfoMessage.WRONG_ANSWER;
                 judgeInfoResponse.setMessage(judgeInfoMessage.getValue());
                 return judgeInfoResponse;

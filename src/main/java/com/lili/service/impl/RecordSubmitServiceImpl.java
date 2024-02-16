@@ -102,6 +102,7 @@ public class RecordSubmitServiceImpl extends ServiceImpl<RecordSubmitMapper, Rec
         Integer language = recordSubmitQueryRequest.getLanguage();
         Long questionId = recordSubmitQueryRequest.getQuestionId();
         Long createId = recordSubmitQueryRequest.getCreateId();
+        Integer result = recordSubmitQueryRequest.getResult();
         String sortField = recordSubmitQueryRequest.getSortField();
         String sortOrder = recordSubmitQueryRequest.getSortOrder();
 
@@ -110,6 +111,7 @@ public class RecordSubmitServiceImpl extends ServiceImpl<RecordSubmitMapper, Rec
         queryWrapper.eq(ObjectUtil.isNotEmpty(language), "language", language);
         queryWrapper.eq(ObjectUtil.isNotEmpty(questionId), "question_id", questionId);
         queryWrapper.eq(ObjectUtil.isNotEmpty(createId), "create_id", createId);
+        queryWrapper.eq(ObjectUtil.isNotEmpty(result), "result", result);
 
         // 检查排序字段是否合法, 看排序字段是不是recordSubmit中的属性
         boolean valid = false;

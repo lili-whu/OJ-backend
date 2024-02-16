@@ -94,7 +94,7 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandBox{
             System.out.println(executeMessage.getErrorMessage());
             throw new CodeSandboxException(executeMessage.getErrorMessage(), 3);
         }
-        System.out.println("compileExecuteMessage = " + executeMessage);
+//        System.out.println("compileExecuteMessage = " + executeMessage);
     }
 
     /**
@@ -113,7 +113,7 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandBox{
             } catch (Exception e) {
                 throw new CodeSandboxException("系统执行异常", 2);
             }
-            log.info("runExecuteMessage = " + executeMessage);
+//            log.info("runExecuteMessage = " + executeMessage);
             executeMessages.add(executeMessage);
         }
         return executeMessages;
@@ -156,7 +156,7 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandBox{
      */
     protected void deleteFile(File userCodeFile){
         boolean del = FileUtil.del(userCodeFile.getParentFile().getAbsolutePath());
-        log.info("文件清理" + (del?"成功":"失败"));
+//        log.info("文件清理" + (del?"成功":"失败"));
     }
 
     /**
