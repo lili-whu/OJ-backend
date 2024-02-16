@@ -26,6 +26,7 @@ mybatis-plus:
 codeSandbox:
   type: example # 沙箱类型, 通过配置切换, 不需要修改代码
 
+docker: "tcp://121.199.10.73:2375"
 
 # springdoc-openapi项目配置
 springdoc:

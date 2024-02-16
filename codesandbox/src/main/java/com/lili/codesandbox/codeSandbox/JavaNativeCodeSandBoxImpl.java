@@ -140,7 +140,7 @@ public class JavaNativeCodeSandBoxImpl implements CodeSandBox{
         JavaNativeCodeSandBoxImpl codeSandBox = new JavaNativeCodeSandBoxImpl();
         ExecuteCodeRequest executeCodeRequest = new ExecuteCodeRequest();
         executeCodeRequest.setInputList(Arrays.asList("1 2", "3 4"));
-        String code = ResourceUtil.readStr("testcode/unsafeCode/Main.java", StandardCharsets.UTF_8);
+        String code = ResourceUtil.readStr("testcode/simpleCompute/Main.java", StandardCharsets.UTF_8);
         executeCodeRequest.setLanguage(1);
         executeCodeRequest.setCode(code);
         ExecuteCodeResponse executeCodeResponse = codeSandBox.executeCode(executeCodeRequest);
