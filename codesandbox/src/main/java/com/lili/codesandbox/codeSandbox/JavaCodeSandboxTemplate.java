@@ -128,24 +128,24 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandBox{
      */
     protected ExecuteCodeResponse getOutputResponse(List<ExecuteMessage> executeMessages){
         ExecuteCodeResponse executeCodeResponse = new ExecuteCodeResponse();
+        // 整理输出结果
         long maxTime = 0; // 执行测试用例所需的最长时间, 用于判断是否超时
+        long maxMemory = 0; // 消耗内存
         List<String> outputList = new ArrayList<>();
         for(ExecuteMessage message: executeMessages){
             if(StringUtils.isNotBlank(message.getErrorMessage())){
-                // 代码执行报错, 直接返回, 不用判断结果, status为3
+                // 代码执行报错, status为3
                 throw new CodeSandboxException(message.getErrorMessage(), 3);
             }
             outputList.add(message.getMessage());
             maxTime = Math.max(maxTime, message.getTime());
+            maxMemory = Math.max(maxMemory, message.getMemory());
         }
-        if(outputList.size() == executeMessages.size()){
-            // 正常执行返回
-            executeCodeResponse.setStatus(1);
-        }
+        executeCodeResponse.setStatus(1);
         executeCodeResponse.setOutputList(outputList);
         JudgeInfo judgeInfo = new JudgeInfo();
+        judgeInfo.setMemoryConsume(maxMemory);
         judgeInfo.setTimeConsume(maxTime);
-
         executeCodeResponse.setJudgeInfo(judgeInfo);
         return executeCodeResponse;
     }

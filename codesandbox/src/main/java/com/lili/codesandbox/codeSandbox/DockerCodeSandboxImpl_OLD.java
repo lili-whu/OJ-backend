@@ -32,15 +32,12 @@ import java.util.concurrent.TimeUnit;
 
 @Deprecated
 public class DockerCodeSandboxImpl_OLD implements CodeSandBox{
-    // todo 这里是OJ的子模块, 路径有一定问题
     public static final String GLOBAL_CODE_DIR = "testcode";
 
     public static final String GLOBAL_FILE_NAME = "Main.java";
 
     public static final Long TIME_OUT = 5000L;
 
-    @Value("${docker}")
-    private String dockerPort;
     @Override
     public ExecuteCodeResponse executeCode(ExecuteCodeRequest executeCodeRequest){
         List<String> inputList = executeCodeRequest.getInputList();
@@ -76,7 +73,7 @@ public class DockerCodeSandboxImpl_OLD implements CodeSandBox{
         // 3. 创建容器, 把class文件放到容器内
         DockerUtils dockerUtils = new DockerUtils();
 
-        DockerClient dockerClient = dockerUtils.connectDocker(dockerPort);
+        DockerClient dockerClient = dockerUtils.connectDocker();
 
         // 创建容器
         CreateContainerCmd containerCmd = dockerClient.createContainerCmd("openjdk:17.0.2-jdk-oraclelinux7");
