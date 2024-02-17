@@ -87,11 +87,8 @@ public class QuestionController {
     @GetMapping("user/{id}")
     @UserRoleAnnotation(UserRole.DEFAULT_ROLE)
     public Result<QuestionUserVO> getUserQuestionById(@PathVariable long id, HttpServletRequest request) {
-        Question question = questionService.getById(id);
-        if (question == null) {
-            throw new BusinessException(ErrorCode.NOT_FOUND, "未找到该题目");
-        }
-        return Result.success(questionService.getQuestionUserVO(question));
+        QuestionUserVO questionUserVO = questionService.getUserQuestionById(id, request);
+        return Result.success(questionUserVO);
     }
 
     /**
@@ -133,7 +130,7 @@ public class QuestionController {
     @PostMapping("/user/page")
     @UserRoleAnnotation(UserRole.DEFAULT_ROLE)
     public Result<PageResult<QuestionUserVO>> getQuestionsByUser(@RequestBody QuestionQueryRequest questionQueryRequest, HttpServletRequest request) {
-        PageResult<QuestionUserVO> questions = questionService.getQuestionsByUser(questionQueryRequest);
+        PageResult<QuestionUserVO> questions = questionService.getQuestionsByUser(questionQueryRequest, request);
         return Result.success(questions);
     }
 }

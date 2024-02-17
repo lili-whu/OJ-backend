@@ -23,7 +23,7 @@ public interface QuestionService extends IService<Question> {
 
     QueryWrapper<Question> getQueryWrapper(QuestionQueryRequest questionQueryRequest);
 
-    PageResult<QuestionUserVO> getQuestionsByUser(QuestionQueryRequest questionQueryRequest);
+    PageResult<QuestionUserVO> getQuestionsByUser(QuestionQueryRequest questionQueryRequest, HttpServletRequest httpServletRequest);
 
     PageResult<QuestionAdminVO> getQuestionsByAdmin(QuestionQueryRequest questionQueryRequest);
 
@@ -36,4 +36,6 @@ public interface QuestionService extends IService<Question> {
     long addQuestion(QuestionAddRequest questionAddRequest, HttpServletRequest request);
 
     boolean updateQuestion(QuestionUpdateRequest questionUpdateRequest);
+
+    QuestionUserVO getUserQuestionById(long id, HttpServletRequest request);
 }

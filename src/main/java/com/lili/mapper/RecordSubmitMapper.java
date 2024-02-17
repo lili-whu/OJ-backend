@@ -3,6 +3,8 @@ package com.lili.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.lili.model.RecordSubmit;
 
+import java.util.List;
+
 
 /**
 * @author lili
@@ -12,6 +14,7 @@ import com.lili.model.RecordSubmit;
 */
 public interface RecordSubmitMapper extends BaseMapper<RecordSubmit> {
 
+    List<RecordSubmit> selectByQuestionIdList(List<Long> questionIdList, Long userId);
 }
 
 

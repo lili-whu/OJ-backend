@@ -1,6 +1,7 @@
 package com.lili.model.vo.question;
 
 import com.lili.model.request.question.JudgeConfig;
+import com.lili.model.vo.recordSubmit.RecordSubmitVO;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -40,6 +41,14 @@ public class QuestionUserVO extends CreateQuestionUserInfo implements Serializab
      * 时空条件限制
      */
     private JudgeConfig judgeConfig;
+
+    /**
+     * 用户此题的提交记录
+     */
+    private String submitStatus;
+
+    private List<RecordSubmitVO> recordSubmitVOList;
+
 
     /**
      * 提交次数

@@ -2,10 +2,12 @@ package com.lili.model.request.question;
 
 import com.lili.model.request.PageRequest;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class QuestionQueryRequest extends PageRequest implements Serializable {
     /**

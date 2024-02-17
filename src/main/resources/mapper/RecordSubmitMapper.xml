@@ -24,4 +24,14 @@
         create_id,create_time,update_time,
         is_delete
     </sql>
+    <select id="selectByQuestionIdList" resultType="com.lili.model.RecordSubmit">
+        select * from record_submit where create_id = #{userId}
+        <if test="questionIdList != null and questionIdList.size() > 0">
+        AND question_id IN
+        <foreach collection="questionIdList" item="questionId" open="(" close=")" separator=",">
+            #{questionId}
+        </foreach>
+    </if>
+        ORDER BY create_time ASC;
+    </select>
 </mapper>

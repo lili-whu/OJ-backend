@@ -2,29 +2,41 @@ package com.lili.service.impl;
 
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lili.constant.SortConstant;
+import com.lili.constant.StringConstant;
 import com.lili.constant.enums.ErrorCode;
+import com.lili.constant.enums.JudgeInfoMessage;
 import com.lili.exception.BusinessException;
+import com.lili.judge.codeSandbox.model.JudgeInfo;
 import com.lili.mapper.QuestionMapper;
+import com.lili.mapper.RecordSubmitMapper;
 import com.lili.model.PageResult;
 import com.lili.model.Question;
+import com.lili.model.RecordSubmit;
 import com.lili.model.request.question.*;
+import com.lili.model.vo.recordSubmit.RecordSubmitVO;
 import com.lili.model.vo.user.SafetyUser;
 import com.lili.model.vo.question.QuestionAdminVO;
 import com.lili.model.vo.question.QuestionUserVO;
 import com.lili.service.QuestionService;
+import com.lili.service.RecordSubmitService;
 import com.lili.service.UserService;
+import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -38,6 +50,13 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
 
     @Autowired
     private QuestionMapper questionMapper;
+
+    @Resource
+    private RecordSubmitMapper recordSubmitMapper;
+
+    @Resource
+    @Lazy
+    private RecordSubmitService recordSubmitService;
 
     @Autowired
     private UserService userService;
@@ -121,7 +140,9 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
     }
 
     @Override
-    public PageResult<QuestionUserVO> getQuestionsByUser(QuestionQueryRequest questionQueryRequest){
+    public PageResult<QuestionUserVO> getQuestionsByUser(QuestionQueryRequest questionQueryRequest, HttpServletRequest httpServletRequest){
+        SafetyUser safetyUser = (SafetyUser) httpServletRequest.getSession().getAttribute(StringConstant.USER_LOGIN_STATE);
+        Long userId = safetyUser.getId();
         long current = questionQueryRequest.getCurrent();
         long size = questionQueryRequest.getPageSize();
         IPage<Question> iPage = new Page<>();
@@ -129,6 +150,24 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
         iPage.setCurrent(current);
         List<QuestionUserVO> questions = questionMapper.selectList(iPage, this.getQueryWrapper(questionQueryRequest))
                 .stream().map(this::getQuestionUserVO).toList();
+        // 查询每一道题的提交状态(foreach动态sql/批量查询)
+        List<Long> questionIdList = questions.stream().map(QuestionUserVO::getId).toList();
+        // 查询提交记录, 按照创建时间排序
+        List<RecordSubmit> recordSubmits = recordSubmitMapper.selectByQuestionIdList(questionIdList, userId);
+        // hash表对提交记录去重, 保留最近提交记录
+        HashMap<Long, RecordSubmit> map = new HashMap<>();
+        recordSubmits.forEach(recordSubmit -> {
+                if(map.containsKey(recordSubmit.getQuestionId())){
+                    map.replace(recordSubmit.getQuestionId(), recordSubmit);
+                }else{
+                    map.put(recordSubmit.getQuestionId(), recordSubmit);
+                }
+        });
+        questions.forEach(questionUserVO -> {
+            if(map.containsKey(questionUserVO.getId())){
+                questionUserVO.setSubmitStatus(JSONUtil.toBean(map.get(questionUserVO.getId()).getJudgeInfo(), JudgeInfo.class).getMessage());
+            }
+        });
         return new PageResult<QuestionUserVO>(iPage.getTotal(), questions);
 
     }
@@ -217,6 +256,30 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
             throw new BusinessException(ErrorCode.NOT_FOUND, "需要更新的题目不存在");
         }
         return this.updateById(question);
+    }
+
+    /**
+     * 用户根据题目id查询题目信息和自己的提交记录
+     * @param id 题目id
+     * @param request request
+     * @return 用户题目VO
+     */
+    @Override
+    public QuestionUserVO getUserQuestionById(long id, HttpServletRequest request){
+        SafetyUser safetyUser =(SafetyUser) request.getSession().getAttribute(StringConstant.USER_LOGIN_STATE);
+        Question question = this.getById(id);
+        if (question == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND, "未找到该题目");
+        }
+        QuestionUserVO questionUserVO = this.getQuestionUserVO(question);
+        // 对提交记录进行查询
+        QueryWrapper<RecordSubmit> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("question_id", questionUserVO.getId());
+        queryWrapper.eq("create_id", safetyUser.getId());
+        List<RecordSubmit> recordSubmitList = recordSubmitMapper.selectList(queryWrapper);
+        List<RecordSubmitVO> recordSubmitVOList = recordSubmitList.stream().map(recordSubmit -> recordSubmitService.getRecordSubmitVO(recordSubmit, safetyUser)).toList();
+        questionUserVO.setRecordSubmitVOList(recordSubmitVOList);
+        return questionUserVO;
     }
 }
 

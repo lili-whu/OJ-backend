@@ -24,7 +24,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,title,description,
+        id,title,`description`,
         tags,answer,judge_case,
         judge_config,submit_num,accept_num,
         thumb_num,favor_num,create_id,
