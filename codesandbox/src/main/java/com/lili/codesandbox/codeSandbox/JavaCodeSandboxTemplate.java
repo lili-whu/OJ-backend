@@ -117,7 +117,7 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandBox{
             } catch (Exception e) {
                 throw new CodeSandboxException("系统执行异常", CodeSandboxStatusEnum.SYSTEM_ERROR.getCode());
             }
-//            log.info("runExecuteMessage = " + executeMessage);
+            executeMessage.setMemory(0L);
             executeMessages.add(executeMessage);
         }
         return executeMessages;

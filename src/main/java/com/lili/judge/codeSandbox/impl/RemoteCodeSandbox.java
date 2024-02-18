@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 public class RemoteCodeSandbox implements CodeSandBox{
 
     @Value("${codeSandbox.url}")
-    private String url = "http://localhost:8081/exeCodeDocker";
+    private String url = "http://localhost:8081/exeCodeNative";
 
     @Override
     public ExecuteCodeResponse executeCode(ExecuteCodeRequest executeCodeRequest){

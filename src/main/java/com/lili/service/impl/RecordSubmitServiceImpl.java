@@ -153,6 +153,15 @@ public class RecordSubmitServiceImpl extends ServiceImpl<RecordSubmitMapper, Rec
         return recordSubmitVO;
 
     }
+
+    @Override
+    public RecordSubmitVO getSingleRecordSubmit(Long id,  HttpServletRequest request){
+        // 得到调用方法的user
+        SafetyUser user = userService.getLoginUser(request);
+        // 脱敏转换为VO返回
+        RecordSubmit recordSubmit = recordSubmitMapper.selectById(id);
+        return getRecordSubmitVO(recordSubmit, user);
+    }
 }
 
 

@@ -9,6 +9,7 @@ import com.lili.constant.enums.ErrorCode;
 import com.lili.exception.BusinessException;
 import com.lili.model.User;
 import com.lili.model.request.user.SafetyUserDTO;
+import com.lili.model.request.user.SafetyUserDTOByUser;
 import com.lili.model.vo.user.PageSafetyUserVO;
 import com.lili.model.vo.user.SafetyUser;
 import com.lili.service.UserService;
@@ -129,21 +130,31 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     @Transactional
-    public void reviseUser(SafetyUserDTO safetyUserDTO){
+    public void reviseUser(SafetyUserDTO safetyUserDTO, HttpServletRequest request){
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-
-        // 查询username是否重复
-        queryWrapper.eq("user_account", safetyUserDTO.getUsername());
-
-
-        boolean exist = this.baseMapper.exists(queryWrapper);
-        if(exist) throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户名已被占用");
-
-
         User user = new User();
+
+        if(!Pattern.matches("[a-zA-Z1-9_]{6,20}", safetyUserDTO.getUserAccount())){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账户名称不符合要求");
+        }
+
+        // 查询userAccount是否重复
+        queryWrapper.eq("user_account", safetyUserDTO.getUserAccount());
+        User examineUser = this.baseMapper.selectOne(queryWrapper);
+        if(examineUser != null) throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户名已被占用");
+
+        // 指定修改用户
         BeanUtils.copyProperties(safetyUserDTO, user);
         userMapper.updateById(user);
-        //todo 更新用户后需要更新session中的用户信息
+
+        // 得到管理员信息
+        SafetyUser admin = (SafetyUser) request.getSession().getAttribute(StringConstant.USER_LOGIN_STATE);
+        // 管理元修改自己时, 修改登陆session
+        if(user.getId().equals(admin.getId())){
+            User updatedUser = userMapper.selectById(admin.getId());
+            // 重新设置session
+            request.getSession().setAttribute(StringConstant.USER_LOGIN_STATE, this.getSafeUser(updatedUser));
+        }
     }
 
     @Override
@@ -174,6 +185,36 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public SafetyUser getLoginUser(HttpServletRequest httpServletRequest){
         return (SafetyUser) httpServletRequest.getSession().getAttribute(StringConstant.USER_LOGIN_STATE);
+    }
+
+    @Override
+    public void reviseUserByUser(SafetyUserDTOByUser safetyUserDTOByUser, HttpServletRequest request){
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+
+        User user = new User();
+
+        if(!Pattern.matches("[a-zA-Z1-9_]{6,20}", safetyUserDTOByUser.getUserAccount())){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账户名称不符合要求");
+        }
+
+        // 得到id
+        SafetyUser safetyUser = (SafetyUser) request.getSession().getAttribute(StringConstant.USER_LOGIN_STATE);
+        user.setId(safetyUser.getId());
+
+        // 查询username是否重复
+        queryWrapper.eq("user_account", safetyUserDTOByUser.getUserAccount());
+
+
+        User examineUser = this.baseMapper.selectOne(queryWrapper);
+        if(examineUser != null && !examineUser.getId().equals(user.getId())) throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户名已被占用");
+
+
+        BeanUtils.copyProperties(safetyUserDTOByUser, user);
+        userMapper.updateById(user);
+        User updatedUser = userMapper.selectById(user.getId());
+        // 重新设置session
+        request.getSession().setAttribute(StringConstant.USER_LOGIN_STATE, this.getSafeUser(updatedUser));
+
     }
 
     private void verifyAccountAndPassword(String userAccount, String password){

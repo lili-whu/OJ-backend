@@ -3,6 +3,7 @@ package com.lili.service;
 import com.lili.model.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.lili.model.request.user.SafetyUserDTO;
+import com.lili.model.request.user.SafetyUserDTOByUser;
 import com.lili.model.vo.user.PageSafetyUserVO;
 import com.lili.model.vo.user.SafetyUser;
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,9 +39,11 @@ public interface UserService extends IService<User> {
     /**
      * 管理员修改用户信息
      */
-    void reviseUser(SafetyUserDTO safetyUserDTO);
+    void reviseUser(SafetyUserDTO safetyUserDTO, HttpServletRequest request);
 
     PageSafetyUserVO searchUsers(int pageSize, int current, SafetyUserDTO safetyUserDTO);
 
     SafetyUser getLoginUser(HttpServletRequest httpServletRequest);
+
+    void reviseUserByUser(SafetyUserDTOByUser safetyUserDTOByUser, HttpServletRequest request);
 }

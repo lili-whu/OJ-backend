@@ -63,11 +63,6 @@ public class RecordSubmitVO implements Serializable{
      */
     private SafetyUser safetyUser;
 
-    /**
-     * 题目信息
-     */
-    private QuestionUserVO questionUserVO;
-
 
     private static final long serialVersionUID = 1L;
 }

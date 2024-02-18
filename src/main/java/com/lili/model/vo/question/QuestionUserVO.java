@@ -3,11 +3,13 @@ package com.lili.model.vo.question;
 import com.lili.model.request.question.JudgeConfig;
 import com.lili.model.vo.recordSubmit.RecordSubmitVO;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class QuestionUserVO extends CreateQuestionUserInfo implements Serializable{
     /**
@@ -45,9 +47,13 @@ public class QuestionUserVO extends CreateQuestionUserInfo implements Serializab
     /**
      * 用户此题的提交记录
      */
+    private List<RecordSubmitVO> recordSubmitVOList;
+
+    /**
+     * 用户此题的提交状态
+     */
     private String submitStatus;
 
-    private List<RecordSubmitVO> recordSubmitVOList;
 
 
     /**

@@ -29,4 +29,6 @@ public interface RecordSubmitService extends IService<RecordSubmit> {
     PageResult<RecordSubmitVO> getRecordSubmitPageVO(RecordSubmitQueryRequest recordSubmitQueryRequest, HttpServletRequest request);
 
     RecordSubmitVO getRecordSubmitVO(RecordSubmit recordSubmit, SafetyUser user);
+
+    RecordSubmitVO getSingleRecordSubmit(Long id, HttpServletRequest request);
 }

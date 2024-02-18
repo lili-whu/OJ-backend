@@ -9,6 +9,7 @@ import com.lili.exception.BusinessException;
 import com.lili.model.Result;
 import com.lili.model.User;
 import com.lili.model.request.user.SafetyUserDTO;
+import com.lili.model.request.user.SafetyUserDTOByUser;
 import com.lili.model.request.user.UserLoginRequest;
 import com.lili.model.request.user.UserRegisterRequest;
 import com.lili.model.vo.user.PageSafetyUserVO;
@@ -116,17 +117,29 @@ public class UserController{
 
     /**
      * 管理员修改用户信息
-     * @param user
      * @return
      */
-    @PutMapping("/revise")
+    @PutMapping("/revise/")
     @UserRoleAnnotation(UserRole.ADMIN_ROLE)
-    public Result<Boolean> reviseUser(User user, HttpServletRequest request){
-        log.info("revise user by admin: {}", user);
+    public Result<Boolean> reviseUser(@RequestBody SafetyUserDTO safetyUserDTO, HttpServletRequest request){
+        log.info("revise user by admin: {}", safetyUserDTO);
 
-        userService.update();
+        userService.reviseUser(safetyUserDTO, request);
         return Result.success(true);
     }
 
+
+    /**
+     * 用户修改信息
+     * @return
+     */
+    @PutMapping("/revise/user")
+    @UserRoleAnnotation(UserRole.DEFAULT_ROLE)
+    public Result<Boolean> reviseUserByUser(@RequestBody SafetyUserDTOByUser safetyUserDTOByUser, HttpServletRequest request){
+        log.info("revise user by user: {}", safetyUserDTOByUser);
+
+        userService.reviseUserByUser(safetyUserDTOByUser, request);
+        return Result.success(true);
+    }
 
 }
