@@ -3,17 +3,18 @@ package com.lili.codesandbox.codeSandbox;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.resource.ResourceUtil;
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.async.ResultCallback;
 import com.github.dockerjava.api.async.ResultCallbackTemplate;
 import com.github.dockerjava.api.command.*;
-import com.github.dockerjava.api.model.Frame;
-import com.github.dockerjava.api.model.HostConfig;
-import com.github.dockerjava.api.model.Statistics;
-import com.github.dockerjava.api.model.StreamType;
+import com.github.dockerjava.api.model.*;
+import com.github.dockerjava.core.DefaultDockerClientConfig;
+import com.github.dockerjava.core.DockerClientBuilder;
+import com.github.dockerjava.httpclient5.ApacheDockerHttpClient;
+import com.github.dockerjava.transport.DockerHttpClient;
 import com.lili.codesandbox.codeSandbox.CodeSandBox;
-import com.lili.codesandbox.codeSandbox.DockerUtils;
 import com.lili.codesandbox.codeSandbox.model.ExecuteCodeRequest;
 import com.lili.codesandbox.codeSandbox.model.ExecuteCodeResponse;
 import com.lili.codesandbox.codeSandbox.model.ExecuteMessage;
@@ -28,7 +29,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 import java.io.*;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -42,6 +45,9 @@ public class DockerCodeSandboxImpl extends JavaCodeSandboxTemplate{
     public static final Long TIME_OUT = 5000L;
 
 
+    @Value("${docker}")
+    private String dockerPort;
+
     /**
      * 创建容器, 把class文件放到容器内, 运行代码, 删除容器
      * @param compiledFile 编译后文件
@@ -51,8 +57,7 @@ public class DockerCodeSandboxImpl extends JavaCodeSandboxTemplate{
     @Override
     protected List<ExecuteMessage> runJavaCode(File compiledFile, List<String> inputList){
 
-        DockerUtils dockerUtils = new DockerUtils();
-        DockerClient dockerClient = dockerUtils.connectDocker();
+        DockerClient dockerClient = connectDocker();
 
         // 创建容器
         CreateContainerCmd containerCmd = dockerClient.createContainerCmd("openjdk:17.0.2-jdk-oraclelinux7");
@@ -155,6 +160,30 @@ public class DockerCodeSandboxImpl extends JavaCodeSandboxTemplate{
         System.out.println("executeCodeResponse = " + executeCodeResponse);
 
     }
+
+    /**
+     * 连接Docker服务器
+     * @return 连接服务
+     */
+    public DockerClient connectDocker(){
+
+
+        DefaultDockerClientConfig custom = DefaultDockerClientConfig.createDefaultConfigBuilder()
+                .withDockerHost(dockerPort)
+                .build();
+
+        DockerHttpClient httpClient = new ApacheDockerHttpClient.Builder()
+                .dockerHost(URI.create(dockerPort))
+                .maxConnections(100)
+                .connectionTimeout(Duration.ofSeconds(30))
+                .responseTimeout(Duration.ofSeconds(45))
+                .build();
+        DockerClient dockerClient = DockerClientBuilder.getInstance(custom).withDockerHttpClient(httpClient).build();
+        Version version = dockerClient.versionCmd().exec();
+        log.info("版本信息" + JSONUtil.toJsonStr(version));
+        return dockerClient;
+    }
+
 
     /**
      *  压缩tar文件

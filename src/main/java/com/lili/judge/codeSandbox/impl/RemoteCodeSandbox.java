@@ -14,14 +14,21 @@ import org.springframework.stereotype.Service;
 @Service
 public class RemoteCodeSandbox implements CodeSandBox{
 
+
+    // 定义鉴权请求头 + 密钥
+    public static final String AUTH_REQUEST_HEADER = "auth";
+
+    public static final String AUTH_REQUEST_SECRET = "secret";
+
+    // Value注解不能是static final,并且只能通过spring bean管理
     @Value("${codeSandbox.url}")
-    private String url = "http://localhost:8081/exeCodeNative";
+    private String url;
 
     @Override
     public ExecuteCodeResponse executeCode(ExecuteCodeRequest executeCodeRequest){
-        System.out.println("远程代码沙箱");
         String json = JSONUtil.toJsonStr(executeCodeRequest);
         String responseStr = HttpUtil.createPost(url)
+                .header(AUTH_REQUEST_HEADER, AUTH_REQUEST_SECRET)
                 .body(json)
                 .execute()
                 .body();

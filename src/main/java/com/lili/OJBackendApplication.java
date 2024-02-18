@@ -6,10 +6,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 @MapperScan("com.lili.mapper")
-public class UserManageBackendApplication{
+public class OJBackendApplication{
 
     public static void main(String[] args){
-        SpringApplication.run(UserManageBackendApplication.class, args);
+        SpringApplication.run(OJBackendApplication.class, args);
     }
 
 }

@@ -1,13 +1,11 @@
 # OJ系统后端
-使用 java + springboot + mybatis_plus 构建的OJ系统
-* 基础登录注册用户管理功能继承user-center-backend项目
-
+使用 java + springboot + mysql + mybatis_plus + redis + rabbitMQ构建的OJ系统
 ## OJ主界面分析
 时间限制, 内存限制 时间复杂度, 空间复杂度(只能使用特定包, 不能暴力解 => 安全性)
 题目介绍, 输入, 输出, 输入用例, 输出用例
 
 ## 系统分析
-后端编译代码, 运行代码, 输入测试用例, 获得结果, 比对测试结果
+后端代码沙箱编译代码, 运行代码, 输入测试用例, 判题服务获得结果, 比对测试结果
 
 ## 核心功能
 1. 题目提交, 题目描述, 做题界面
@@ -18,16 +16,11 @@
    * 提米用例的比对, 结果验证
 4. 任务调度
    * 按照顺序排队完成判题
-## 扩展思路:
-1. 做题记录统计分析展示
-2. 题解讨论, 点赞等论坛功能
-
 ## 2.6 题目模块开发
 1. 题目和题目提交数据库表设计
-   use liOJ;
 
-drop table if exists user;
-# user表
+#### user表
+
 ```mysql
 drop table if exists question;
 
@@ -253,27 +246,32 @@ tips: 封装类用包装类型, 前端没有传入值默认为null
      * 在用户根据题目id查询详细信息方法中, 同时关联查询用户的所有提交记录
 2. **bug** 在创建openapi接口时, questionUserVO中的RecordSubmitVO总是无法创建接口
 
-​		原因: RecordSubmitVO中包含了questionUserVO字段, 产生了循环依赖, 导致文档错误, 所以无法生成, 但可以正常执行返回, 因为返回时没有循环依赖(20min)
+ RecordSubmitVO中包含了questionUserVO字段, 产生了循环依赖, 导致文档错误, 所以无法生成, 但可以正常执行返回, 因为返回时没有循环依赖(20min)
 
 3. 题目界面优化: 自动加载用户的上一次提交代码, 显示上一次的提交结果
 
 ## 2.18
 
-//todo 1. 用户信息修改界面
+3. 参数配置化
+4. 消息队列解耦
+5. 对其他数据结构(引用类型输入的支持, 二叉树, List)
 
-2. 用户查看详情界面
-3. 用户查看提交记录界面
-4. 对应后端
-5. 消息队列解耦
-6. 对其他数据结构(引用类型输入的支持, 二叉树, List)
-
-1. 后端添加了阿里云oss文件上传方法配置
+1. 后端添加了阿里云oss文件上传方法配置,用于用户上传图片
 2. 完善了用户修改个人信息的方法
 
 * 新增SafetyUserDTOByUser, 用于用户传递修改的信息
 * 管理员和用户修改分开校验
 * 当用户修改信息之后, 重新设置登录的session
 
+3. 参数配置化, 将参数写入配置文件中
+
+* 变量不能定义为static final, 必须是sping bean, 必须通过依赖注入调用类
+
+4. 修改工厂模式, 在configuration中定义bean, 然后在工厂类中声明component, 通过ApplicationContext得到spring bean并返回
+5. 安全性配置
+* 在判题服务和代码沙箱中约定一个key value, 设置在请求头header中, 代码沙箱对请求进行鉴权
+6. 配置redis 和 session 实现将session存储在redis中, 实现分布式登录
+7. redis实现限流, 设定过时时间10s, 不允许10s内重复提交
 # userManage-backend
 
 一个简单的登录注册和用户管理后端

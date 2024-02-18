@@ -7,7 +7,7 @@ import com.lili.constant.enums.JudgeInfoMessage;
 import com.lili.constant.enums.RecordSubmitStatusEnum;
 import com.lili.exception.BusinessException;
 import com.lili.judge.codeSandbox.CodeSandBox;
-import com.lili.judge.codeSandbox.CodeSandBoxFactory;
+import com.lili.judge.codeSandbox.CodeSandboxFactory;
 import com.lili.judge.codeSandbox.CodeSandBoxProxy;
 import com.lili.judge.codeSandbox.model.ExecuteCodeRequest;
 import com.lili.judge.codeSandbox.model.ExecuteCodeResponse;
@@ -40,18 +40,19 @@ public class JudgeServiceImpl implements JudgeService{
     @Value("${codeSandbox.type}")
     private String sandboxType;
 
+    @Autowired
+    private CodeSandboxFactory codeSandboxFactory;
+
     @Override
     public void doJudge(long recordSubmitId){
 
 
-        // 1. 用户限流 todo 使用Redis限流用户10秒内只允许一次提交
-
-        // 2. 获取提交记录
+        // 1. 获取提交记录
         RecordSubmit recordSubmit = recordSubmitService.getById(recordSubmitId);
         if(recordSubmit == null){
             throw new BusinessException(ErrorCode.NOT_FOUND, "提交信息不存在");
         }
-        // 3. 获取问题信息
+        // 2. 获取问题信息
         Long questionId = recordSubmit.getQuestionId();
         Question question = questionService.getById(questionId);
         if(question == null){
@@ -59,8 +60,8 @@ public class JudgeServiceImpl implements JudgeService{
         }
 
 
-        // 4. 调用代码沙箱
-        CodeSandBox codeSandBox = CodeSandBoxFactory.newInstance(sandboxType);
+        // 3. 调用代码沙箱
+        CodeSandBox codeSandBox = codeSandboxFactory.newInstance(sandboxType);
         codeSandBox = new CodeSandBoxProxy(codeSandBox);
         Integer language = recordSubmit.getLanguage();
         String code = recordSubmit.getCode();
@@ -72,11 +73,11 @@ public class JudgeServiceImpl implements JudgeService{
                 .inputList(inputList)
                 .build();
 
-        // 5. 获取执行结果
+        // 4. 获取执行结果
         ExecuteCodeResponse executeCodeResponse = codeSandBox.executeCode(executeCodeRequest);
 
 
-        // 6.执行判题服务
+        // 5.执行判题服务
         List<String> outputList = executeCodeResponse.getOutputList();
         JudgeInfo judgeInfo = executeCodeResponse.getJudgeInfo();
         JudgeContext judgeContext = new JudgeContext();
@@ -89,7 +90,7 @@ public class JudgeServiceImpl implements JudgeService{
         // 直接调用judgeMapper, 类似静态代理模式, 会在judgeManager中完成策略模式的选择
         JudgeInfo judgeInfoResponse = judgeManager.doJudge(judgeContext);
 
-        // 7.结果写入数据库
+        // 6.结果写入数据库
         RecordSubmit recordSubmitUpdate = new RecordSubmit();
         recordSubmitUpdate.setId(recordSubmitId);
         recordSubmitUpdate.setJudgeInfo(JSONUtil.toJsonStr(judgeInfoResponse));

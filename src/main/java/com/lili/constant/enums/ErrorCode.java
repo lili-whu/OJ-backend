@@ -15,6 +15,7 @@ public enum ErrorCode{
     PARAMS_ERROR(40001), // 参数错误
     NOT_FOUND(40400), //未发现
     API_REQUEST_ERROR(50010), // API请求错误
+    SUBMIT_TOO_MUCH(40000), // 提交请求过多
     NULL_PARAM(40002); // 参数为空
 
 

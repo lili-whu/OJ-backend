@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lili.constant.SortConstant;
+import com.lili.constant.StringConstant;
 import com.lili.constant.enums.ErrorCode;
 import com.lili.constant.enums.RecordSubmitStatusEnum;
 import com.lili.constant.enums.UserRole;
@@ -26,10 +27,13 @@ import com.lili.model.vo.user.SafetyUser;
 import com.lili.service.QuestionService;
 import com.lili.service.RecordSubmitService;
 import com.lili.service.UserService;
+import com.lili.utils.SubmissionLimit;
+import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
@@ -56,6 +60,8 @@ public class RecordSubmitServiceImpl extends ServiceImpl<RecordSubmitMapper, Rec
     @Autowired
     private RecordSubmitMapper recordSubmitMapper;
 
+    @Resource
+    private SubmissionLimit submissionLimit;
     /**
      * 题目提交
      *
@@ -65,6 +71,10 @@ public class RecordSubmitServiceImpl extends ServiceImpl<RecordSubmitMapper, Rec
      */
     @Override
     public Long doRecordSubmit(RecordSubmitAddRequest recordSubmitAddRequest, HttpServletRequest httpServletRequest){
+        // 首先使用redis 做限流, 10秒内只允许用户一次提交
+        if(!submissionLimit.trySubmit(httpServletRequest)){
+            throw new BusinessException(ErrorCode.SUBMIT_TOO_MUCH, "提交速度太快, 请等待后重试");
+        }
         // 判断题目是否存在
         long questionId = recordSubmitAddRequest.getQuestionId();
         Question question = questionService.getById(questionId);

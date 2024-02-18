@@ -3,15 +3,17 @@ package com.lili.codesandbox.codeSandbox;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.resource.ResourceUtil;
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.async.ResultCallback;
 import com.github.dockerjava.api.async.ResultCallbackTemplate;
 import com.github.dockerjava.api.command.*;
-import com.github.dockerjava.api.model.Frame;
-import com.github.dockerjava.api.model.HostConfig;
-import com.github.dockerjava.api.model.Statistics;
-import com.github.dockerjava.api.model.StreamType;
+import com.github.dockerjava.api.model.*;
+import com.github.dockerjava.core.DefaultDockerClientConfig;
+import com.github.dockerjava.core.DockerClientBuilder;
+import com.github.dockerjava.httpclient5.ApacheDockerHttpClient;
+import com.github.dockerjava.transport.DockerHttpClient;
 import com.lili.codesandbox.codeSandbox.model.ExecuteCodeRequest;
 import com.lili.codesandbox.codeSandbox.model.ExecuteCodeResponse;
 import com.lili.codesandbox.codeSandbox.model.ExecuteMessage;
@@ -23,7 +25,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StopWatch;
 
 import java.io.*;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,6 +41,10 @@ public class DockerCodeSandboxImpl_OLD implements CodeSandBox{
     public static final String GLOBAL_FILE_NAME = "Main.java";
 
     public static final Long TIME_OUT = 5000L;
+
+
+    @Value("${docker}")
+    private String dockerPort;
 
     @Override
     public ExecuteCodeResponse executeCode(ExecuteCodeRequest executeCodeRequest){
@@ -71,9 +79,8 @@ public class DockerCodeSandboxImpl_OLD implements CodeSandBox{
         System.out.println("compileExecuteMessage = " + executeMessage);
 
         // 3. 创建容器, 把class文件放到容器内
-        DockerUtils dockerUtils = new DockerUtils();
 
-        DockerClient dockerClient = dockerUtils.connectDocker();
+        DockerClient dockerClient = this.connectDocker();
 
         // 创建容器
         CreateContainerCmd containerCmd = dockerClient.createContainerCmd("openjdk:17.0.2-jdk-oraclelinux7");
@@ -279,4 +286,21 @@ public class DockerCodeSandboxImpl_OLD implements CodeSandBox{
     // 将字节输出流转换为输入流
     return new ByteArrayInputStream(out.toByteArray());
 }
+    public DockerClient connectDocker(){
+
+
+        DefaultDockerClientConfig custom = DefaultDockerClientConfig.createDefaultConfigBuilder()
+                .withDockerHost(dockerPort)
+                .build();
+
+        DockerHttpClient httpClient = new ApacheDockerHttpClient.Builder()
+                .dockerHost(URI.create(dockerPort))
+                .maxConnections(100)
+                .connectionTimeout(Duration.ofSeconds(30))
+                .responseTimeout(Duration.ofSeconds(45))
+                .build();
+        DockerClient dockerClient = DockerClientBuilder.getInstance(custom).withDockerHttpClient(httpClient).build();
+        Version version = dockerClient.versionCmd().exec();
+        return dockerClient;
+    }
 }

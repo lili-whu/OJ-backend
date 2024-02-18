@@ -9,6 +9,7 @@ spring:
     url: jdbc:mysql://localhost:3306/liOJ
   session:
     timeout: 86400 # session过期时间
+    store-type: redis
 
 server:
   port: 8080
@@ -45,10 +46,17 @@ springdoc:
       paths-to-match: '/**'
       packages-to-scan: com.lili.controller
 
+redis:
+  database: 1
+  host: localhost
+  port: 6379
+  timeout: 5000
+
 
 alioss:
   endpoint: oss-cn-beijing.aliyuncs.com
   access-key-id: LTAI5tMkuphzcB7HCCZUAWnC
   access-key-secret: wiLha9mw5kcGlok5yHGcjHTCQc02BI
   bucket-name: lioj
+
 

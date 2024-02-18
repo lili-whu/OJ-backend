@@ -6,9 +6,11 @@ import com.lili.judge.codeSandbox.CodeSandBox;
 import com.lili.judge.codeSandbox.model.ExecuteCodeRequest;
 import com.lili.judge.codeSandbox.model.ExecuteCodeResponse;
 import com.lili.judge.codeSandbox.model.JudgeInfo;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class ExampleCodeSandbox implements CodeSandBox{
     @Override
     public ExecuteCodeResponse executeCode(ExecuteCodeRequest executeCodeRequest){
