@@ -11,6 +11,12 @@ spring:
     timeout: 86400 # session过期时间
     store-type: redis
 
+  rabbitmq:
+    host: localhost
+    port: 5672
+    password: guest
+    username: guest
+
 server:
   port: 8080
 
@@ -45,6 +51,7 @@ springdoc:
     - group: 'default'
       paths-to-match: '/**'
       packages-to-scan: com.lili.controller
+
 
 redis:
   database: 1

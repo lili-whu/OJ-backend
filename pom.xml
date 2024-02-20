@@ -11,8 +11,8 @@
     <groupId>com.lili</groupId>
     <artifactId>OJ-backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>userManage-backend</name>
-    <description>userManage-backend</description>
+    <name>OJ-backend</name>
+    <description>OJ-backend</description>
     <properties>
         <java.version>17</java.version>
     </properties>
@@ -56,7 +56,11 @@
             <groupId>org.apache.httpcomponents.client5</groupId>
             <artifactId>httpclient5</artifactId>
             <version>5.2.3</version> <!-- Make sure to use the latest version -->
+        </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
         </dependency>
 
 

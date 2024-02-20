@@ -24,6 +24,7 @@ import com.lili.model.request.recordSubmit.RecordSubmitAddRequest;
 import com.lili.model.request.recordSubmit.RecordSubmitQueryRequest;
 import com.lili.model.vo.recordSubmit.RecordSubmitVO;
 import com.lili.model.vo.user.SafetyUser;
+import com.lili.rabbitmq.MessageProducer;
 import com.lili.service.QuestionService;
 import com.lili.service.RecordSubmitService;
 import com.lili.service.UserService;
@@ -40,28 +41,23 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-/**
-* @author lili
-* @description 针对表【record_submit】的数据库操作Service实现
-* @createDate 2024-02-07 23:28:01
-*/
 @Service
 public class RecordSubmitServiceImpl extends ServiceImpl<RecordSubmitMapper, RecordSubmit>
     implements RecordSubmitService{
 
-    @Autowired
+    @Resource
     private QuestionService questionService;
-    @Autowired
+    @Resource
     private UserService userService;
 
-    @Autowired
-    @Lazy
-    private JudgeService judgeService;
-    @Autowired
+    @Resource
     private RecordSubmitMapper recordSubmitMapper;
 
     @Resource
     private SubmissionLimit submissionLimit;
+
+    @Resource
+    private MessageProducer messageProducer;
     /**
      * 题目提交
      *
@@ -95,7 +91,8 @@ public class RecordSubmitServiceImpl extends ServiceImpl<RecordSubmitMapper, Rec
         if(!save){
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "判题提交失败");
         }
-        CompletableFuture.runAsync(() -> judgeService.doJudge(recordSubmit.getId()));
+        // 调用消息队列执行判题服务
+        messageProducer.sendMessage("judge_exchange", "my_routing_key", String.valueOf(recordSubmit.getId()));
         return recordSubmit.getId();
     }
 
@@ -128,7 +125,7 @@ public class RecordSubmitServiceImpl extends ServiceImpl<RecordSubmitMapper, Rec
                 valid = true;
                 break;
             }
-        };
+        }
         queryWrapper.orderBy(valid, SortConstant.SORT_ORDER_ASC.equals(sortOrder), StringUtils.camelToUnderline(sortField));
 
         return queryWrapper;
@@ -143,7 +140,10 @@ public class RecordSubmitServiceImpl extends ServiceImpl<RecordSubmitMapper, Rec
         iPage.setCurrent(current);
         // 得到调用方法的user
         SafetyUser user = userService.getLoginUser(httpServletRequest);
-        // 脱敏转换为VO返回
+
+        // 设置用户id
+        recordSubmitQueryRequest.setCreateId(user.getId());
+        // 查询, 脱敏转换为VO返回
         List<RecordSubmitVO> recordSubmitVOS = recordSubmitMapper.selectList(iPage, this.getQueryWrapper(recordSubmitQueryRequest))
                 .stream().map(recordSubmit -> getRecordSubmitVO(recordSubmit, user)).toList();
         return new PageResult<>(iPage.getTotal(), recordSubmitVOS);

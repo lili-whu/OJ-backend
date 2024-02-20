@@ -12,6 +12,7 @@ import com.lili.model.vo.question.QuestionUserVO;
 import com.lili.model.vo.recordSubmit.RecordSubmitVO;
 import com.lili.service.RecordSubmitService;
 import com.lili.service.UserService;
+import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +26,8 @@ import java.util.List;
 @Slf4j
 public class RecordSubmitController {
 
-    @Autowired
+    @Resource
     private RecordSubmitService recordSubmitService;
-
-    @Autowired
-    private UserService userService;
 
 
     @PostMapping("/")
