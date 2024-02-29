@@ -32,7 +32,7 @@ mybatis-plus:
 # 代码沙箱配置
 codeSandbox:
   type: remote # 沙箱类型, 通过配置切换, 不需要修改代码
-  url: http://localhost:8081/exeCodeNative
+  url: http://localhost:8081/exeCodeDocker
 
 
 # springdoc-openapi项目配置
